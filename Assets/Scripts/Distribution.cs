@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Text;
 using UnityEngine;
 
 public class Distribution : MonoBehaviour
@@ -20,7 +21,10 @@ public class Distribution : MonoBehaviour
 
     private void Update()
     {
-        SellPizzas();
+        if (PizzaAmmount > 0)
+        {
+            SellPizzas();
+        }
         RestDeliveryBoys(Time.deltaTime);
     }
 
@@ -76,5 +80,23 @@ public class Distribution : MonoBehaviour
                 Pizzeria.Instance.DeductMoney(deliveryBoy.PayPerDay);
             }
         }
+    }
+
+    public string RestingTimes()
+    {
+        StringBuilder sb = new StringBuilder();
+        foreach (DeliveryBoy deliveryBoy in Instance.DeliveryBoys)
+        {
+            float restDifference = deliveryBoy.RestSpeed - deliveryBoy.RestTime;
+            sb.Append(restDifference.ToString("F1"));
+            sb.Append(", ");
+        }
+
+        if (sb.Length > 2)
+        {
+            sb.Length -= 2;
+        }
+
+        return sb.ToString();
     }
 }
