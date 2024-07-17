@@ -1,4 +1,4 @@
-﻿public class DeliveryBoy
+﻿public class DeliveryGoblin
 {
     public string Name { get; private set; }
     public int CarryCappacity { get; private set; }
@@ -8,7 +8,7 @@
     public int PayPerDay { get; private set; }
     public int PizzasAmount {  get; private set; }
     
-    public DeliveryBoy(string name = "Debug", int carryCappacity = 1, float restSpeed = 1f, int payPerDay = 1) 
+    public DeliveryGoblin(string name = "Debug", int carryCappacity = 1, float restSpeed = 1f, int payPerDay = 1) 
     {
         Name = name;
         CarryCappacity = carryCappacity;

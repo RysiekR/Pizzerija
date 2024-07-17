@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 
-public class DeliveryInput : MonoBehaviour
+public class DistributionInput : MonoBehaviour
 {
     [SerializeField] TextMeshProUGUI DeliveryHUD;
     private void Update()
@@ -13,7 +13,7 @@ public class DeliveryInput : MonoBehaviour
 
     private void RefreshText()
     {
-        DeliveryHUD.text = $"You have {Distribution.Instance.DeliveryBoys.Count} delivery goblins. \n" +
+        DeliveryHUD.text = $"You have {Distribution.Instance.DeliveryGoblins.Count} delivery goblins. \n" +
             $"They rest for: {Distribution.Instance.RestingTimes()}. \n" +
             $"They have {Distribution.Instance.PizzaAmmount} pizzas to deliver.";
     }

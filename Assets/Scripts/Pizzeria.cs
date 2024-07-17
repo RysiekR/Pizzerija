@@ -6,27 +6,14 @@ public class Pizzeria : MonoBehaviour
 
     public int Money { get; private set; } = 0;
     public int PizzasAmmount { get; private set; } = 10;
-    public int BasePizzaPrice { get; private set; } = 10;
+    public int BasePizzaPrice { get; private set; } = 5;
     public int PizzaPrice { get; private set; } = 0;
     public int PizzasSold { get; private set; } = 0;
-    public int PizzaBoys { get; private set; } = 1;
-    public int DoughPrice { get; private set; } = 3;
-    public int SaucePrice { get; private set; } = 1;
-    public int ToppingsPrice { get; private set; } = 2;
-    /*    public int Money { get; private set; } = 0;
-    public int PizzasAmmount { get; private set; } = 10;
-    public int basePizzaPrice { get; private set; } = 5;
-    public int PizzaPrice { get; private set; } = 0;
-    public int PizzasSold { get; private set; } = 0;
-    public int PizzaBoys {  get; private set; } = 1;
-    //public int DoughAmmount { get; private set; } = 2;
-    public int DoughPrice { get; private set; } = 3;
-    //public int SauceAmmount { get; private set; } = 2;
-    public int SaucePrice { get; private set; } = 1;
-    //public int ToppingsAmmount { get; private set; } = 2;
-    public int ToppingsPrice { get; private set; } = 2;*/
-    public int LazyBuyPrice { get; private set; } = 0;
-
+    /*    public int DoughPrice { get; private set; } = 3;
+        public int SaucePrice { get; private set; } = 1;
+        public int ToppingsPrice { get; private set; } = 2;
+        public int LazyBuyPrice { get; private set; } = 0;
+    */
     public Ingredients Ingredients { get; private set; }
 
 
@@ -44,24 +31,24 @@ public class Pizzeria : MonoBehaviour
             Instance = this;
             DontDestroyOnLoad(gameObject);
         }
-        CalculateLazyBuyPrice();
         Ingredients = new Ingredients(2, 2, 2);
+        RecalculatePizzaPrice();
     }
 
     private void FixedUpdate()
     {
         BakePizza();
-        RecalculatePizzaPrice();
     }
 
 
     public void SellPizza()
     {
-
-        PizzasAmmount--;
-        Money += PizzaPrice;
-        PizzasSold++;
-
+        if (PizzasAmmount > 0)
+        {
+            PizzasAmmount--;
+            Money += PizzaPrice;
+            IncreasePizzaSold(1);
+        }
     }
 
 
@@ -76,12 +63,6 @@ public class Pizzeria : MonoBehaviour
         // Obliczamy now¹ cenê
         PizzaPrice = BasePizzaPrice + priceIncrease;
     }
-    private void CalculateLazyBuyPrice()
-    {
-        LazyBuyPrice = DoughPrice + SaucePrice + ToppingsPrice + 3;
-
-    }
-
     private void BakePizza()
     {
         if (bakingTimer > timeToBakeOnePizza)
@@ -107,44 +88,7 @@ public class Pizzeria : MonoBehaviour
         return Ingredients.HasAtLeastOneOfEach();
     }
 
-    public void BuyDough()
-    {
-        if (Money >= DoughPrice)
-        {
-            Money -= DoughPrice;
-            DeliveryTruck.Instance.Ingredients.AddDough(1);
-        }
-    }
 
-    public void BuySauce()
-    {
-        if (Money >= SaucePrice)
-        {
-            Money -= SaucePrice;
-            DeliveryTruck.Instance.Ingredients.AddSauce(1);
-        }
-
-    }
-
-    public void BuyToppings()
-    {
-        if (Money >= ToppingsPrice)
-        {
-            Money -= ToppingsPrice;
-            DeliveryTruck.Instance.Ingredients.AddToppings(1);
-        }
-    }
-
-    public void LazyBuy()
-    {
-        if (Money >= LazyBuyPrice)
-        {
-            Money -= LazyBuyPrice;
-            DeliveryTruck.Instance.Ingredients.AddDough(1);
-            DeliveryTruck.Instance.Ingredients.AddSauce(1);
-            DeliveryTruck.Instance.Ingredients.AddToppings(1);
-        }
-    }
     public void SellPizzaButton()
     {
         Instance.SellPizza();
@@ -182,5 +126,6 @@ public class Pizzeria : MonoBehaviour
         {
             PizzasSold += howMuch;
         }
+        RecalculatePizzaPrice();
     }
 }

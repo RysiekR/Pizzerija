@@ -20,9 +20,13 @@ public class PizzeriaOutput : MonoBehaviour
     {
         if (Pizzeria.Instance.PizzasAmmount > 0)
         {
-            if (other.GetComponent<PlayerLogic>() != null)
+            if (Distribution.Instance.DeliveryGoblins.Count > 0)
             {
-                other.GetComponent<PlayerLogic>().GrabPizzas(Pizzeria.Instance.PizzasAmmount);
+
+                if (other.GetComponent<PlayerLogic>() != null)
+                {
+                    other.GetComponent<PlayerLogic>().GrabPizzas(Pizzeria.Instance.PizzasAmmount);
+                }
             }
         }
     }

@@ -6,7 +6,7 @@ public class Distribution : MonoBehaviour
 {
     public static Distribution Instance;
     public int PizzaAmmount { get; private set; } = 0;
-    public List<DeliveryBoy> DeliveryBoys { get; private set; } = new List<DeliveryBoy>();
+    public List<DeliveryGoblin> DeliveryGoblins { get; private set; } = new List<DeliveryGoblin>();
 
     private void Awake()
     {
@@ -30,33 +30,33 @@ public class Distribution : MonoBehaviour
 
     private void SellPizzas()
     {
-        for (int i = 0; i < DeliveryBoys.Count; i++)
+        for (int i = 0; i < DeliveryGoblins.Count; i++)
         {
-            if (DeliveryBoys[i].Rested)
+            if (DeliveryGoblins[i].Rested)
             {
-                int pizzasToPickUp = DeliveryBoys[i].CarryCappacity;
+                int pizzasToPickUp = DeliveryGoblins[i].CarryCappacity;
                 if (pizzasToPickUp <= PizzaAmmount)
                 {
-                    DeliveryBoys[i].PickUpPizza(pizzasToPickUp);
+                    DeliveryGoblins[i].PickUpPizza(pizzasToPickUp);
                     PizzaAmmount -= pizzasToPickUp;
                 }
                 else
                 {
-                    DeliveryBoys[i].PickUpPizza(PizzaAmmount);
+                    DeliveryGoblins[i].PickUpPizza(PizzaAmmount);
                     PizzaAmmount = 0;
                 }
-                DeliveryBoys[i].SellPizza();
+                DeliveryGoblins[i].SellPizza();
             }
         }
     }
 
     private void RestDeliveryBoys(float time)
     {
-        for (int i = 0; i < DeliveryBoys.Count; i++)
+        for (int i = 0; i < DeliveryGoblins.Count; i++)
         {
-            if (!DeliveryBoys[i].Rested)
+            if (!DeliveryGoblins[i].Rested)
             {
-                DeliveryBoys[i].Rest(time);
+                DeliveryGoblins[i].Rest(time);
             }
         }
     }
@@ -69,14 +69,14 @@ public class Distribution : MonoBehaviour
         }
     }
 
-    public static void BuyDeliveryBoy()
+    public void BuyDeliveryGoblin()
     {
         if (Pizzeria.Instance.PizzaPrice > 6)
         {
-            DeliveryBoy deliveryBoy = new DeliveryBoy();
-            if (Pizzeria.Instance.Money >= deliveryBoy.PayPerDay)
+            DeliveryGoblin deliveryBoy = new DeliveryGoblin("Debug name",3,5,10);
+            if (Pizzeria.Instance.CanPayWithMoney(deliveryBoy.PayPerDay))
             {
-                Instance.DeliveryBoys.Add(deliveryBoy);
+                Instance.DeliveryGoblins.Add(deliveryBoy);
                 Pizzeria.Instance.DeductMoney(deliveryBoy.PayPerDay);
             }
         }
@@ -85,9 +85,9 @@ public class Distribution : MonoBehaviour
     public string RestingTimes()
     {
         StringBuilder sb = new StringBuilder();
-        foreach (DeliveryBoy deliveryBoy in Instance.DeliveryBoys)
+        foreach (DeliveryGoblin deliveryGoblin in Instance.DeliveryGoblins)
         {
-            float restDifference = deliveryBoy.RestSpeed - deliveryBoy.RestTime;
+            float restDifference = deliveryGoblin.RestSpeed - deliveryGoblin.RestTime;
             sb.Append(restDifference.ToString("F1"));
             sb.Append(", ");
         }

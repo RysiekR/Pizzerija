@@ -4,13 +4,19 @@ using UnityEngine;
 
 public class IngredientOutput : MonoBehaviour
 {
+    DeliveryCar myCar;
+
+    private void Start()
+    {
+        myCar = GetComponent<DeliveryCar>();
+    }
     private void OnTriggerEnter(Collider other)
     {
-        if (DeliveryTruck.Instance.HasAnyIngredients())
+        if (myCar.HasAnyIngredients())
         {
             if (other.GetComponent<PlayerLogic>() != null)
             {
-                other.GetComponent<PlayerLogic>().GrabIngredients(DeliveryTruck.Instance.Ingredients);
+                other.GetComponent<PlayerLogic>().GrabIngredients(myCar.CarIngredients);
             }
         }
     }
