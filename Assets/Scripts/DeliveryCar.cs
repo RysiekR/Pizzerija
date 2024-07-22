@@ -12,6 +12,10 @@ public class DeliveryCar : MonoBehaviour
         CarIngredients = new Ingredients(0,0,0);
         AddYourselfToList();
     }
+    public void SetCarIngredients(Ingredients ingredients)
+    {
+        CarIngredients = ingredients;
+    }
     private void Start()
     {
         CarBackUGUI = transform.Find("CarBackCanvas").Find("CarBackTMPT").GetComponent<TextMeshProUGUI>();

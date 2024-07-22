@@ -35,7 +35,7 @@ public class TabMenu : MonoBehaviour
         BuyToppingsB.onClick.AddListener(DeliverySystem.Instance.BuyToppings);
         LazyBuyB = transform.Find("LazyBuyB").GetComponent<Button>();
         LazyBuyB.onClick.AddListener(DeliverySystem.Instance.LazyBuy);
-        SellPizzaB = transform.Find("SellPizzaB").GetComponent <Button>();
+        SellPizzaB = transform.Find("SellPizzaB").GetComponent<Button>();
         SellPizzaB.onClick.AddListener(Pizzeria.Instance.SellPizzaButton);
         BuyDeliveryGoblinsB = transform.Find("BuyDeliveryGoblinB").GetComponent<Button>();
         BuyDeliveryGoblinsB.onClick.AddListener(Distribution.Instance.BuyDeliveryGoblin);
@@ -45,6 +45,7 @@ public class TabMenu : MonoBehaviour
         RefreshMoneyText();
         RefreshPizzaText();
         RefreshIngridients();
+        BuyDeliveryGoblinsB.gameObject.SetActive(Pizzeria.Instance.PizzaPrice > 6);
     }
 
     private void RefreshMoneyText()

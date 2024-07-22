@@ -11,6 +11,7 @@ public class DeliverySystem : MonoBehaviour
     public int ToppingsPrice { get; private set; } = 2;
     public int LazyBuyPrice { get; private set; } = 0;
 
+    ShopingCart shopingCart = new();
 
     private void Awake()
     {
@@ -29,7 +30,7 @@ public class DeliverySystem : MonoBehaviour
     {
         if (deliveryCars.Count != 0)
         {
-            TransferIngredientsTo(deliveryCars[0]);
+            TransferToDeliveryCar();
         }
     }
 
@@ -86,5 +87,11 @@ public class DeliverySystem : MonoBehaviour
         LazyBuyPrice = DoughPrice + SaucePrice + ToppingsPrice + 3;
 
     }
+
+    public void TransferToDeliveryCar()
+    {
+        TransferIngredientsTo(deliveryCars[0]);
+    }
+
 
 }

@@ -9,11 +9,6 @@ public class Pizzeria : MonoBehaviour
     public int BasePizzaPrice { get; private set; } = 5;
     public int PizzaPrice { get; private set; } = 0;
     public int PizzasSold { get; private set; } = 0;
-    /*    public int DoughPrice { get; private set; } = 3;
-        public int SaucePrice { get; private set; } = 1;
-        public int ToppingsPrice { get; private set; } = 2;
-        public int LazyBuyPrice { get; private set; } = 0;
-    */
     public Ingredients Ingredients { get; private set; }
 
 
@@ -83,7 +78,7 @@ public class Pizzeria : MonoBehaviour
         }
     }
 
-    private bool CanBake()
+    public bool CanBake()
     {
         return Ingredients.HasAtLeastOneOfEach();
     }
