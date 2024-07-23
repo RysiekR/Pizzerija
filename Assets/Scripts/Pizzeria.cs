@@ -86,7 +86,7 @@ public class Pizzeria : MonoBehaviour
 
     public void SellPizzaButton()
     {
-        Instance.SellPizza();
+        SellPizza();
     }
     /// <summary>
     /// true when have that much money

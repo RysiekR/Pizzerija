@@ -6,12 +6,11 @@ public class DeliverySystem : MonoBehaviour
     public static List<DeliveryCar> deliveryCars = new List<DeliveryCar>();
     public static DeliverySystem Instance;
     public Ingredients Ingredients;
+    public ShopingCart ShopingCart;
     public int DoughPrice { get; private set; } = 3;
     public int SaucePrice { get; private set; } = 1;
     public int ToppingsPrice { get; private set; } = 2;
     public int LazyBuyPrice { get; private set; } = 0;
-
-    ShopingCart shopingCart = new();
 
     private void Awake()
     {
@@ -23,6 +22,7 @@ public class DeliverySystem : MonoBehaviour
             DontDestroyOnLoad(gameObject);
         }
         Ingredients = new Ingredients(2, 2, 2);
+        ShopingCart = new ShopingCart();
         CalculateLazyBuyPrice();
     }
 

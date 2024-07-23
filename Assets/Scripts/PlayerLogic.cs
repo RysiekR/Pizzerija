@@ -3,6 +3,7 @@ using UnityEngine;
 public class PlayerLogic : MonoBehaviour
 {
     [SerializeField] GameObject IngredientsVisual;
+    [SerializeField] GameObject PizzaBoxxesVisual;
     public Ingredients IngredientsOnPlayer;
     public int PizzasAmount = 0;
 
@@ -15,6 +16,8 @@ public class PlayerLogic : MonoBehaviour
     private void Update()
     {
         IngredientsVisual.SetActive(IngredientsOnPlayer.HasAny());
+        PizzaBoxxesVisual.SetActive(PizzasAmount > 0);
+
     }
 
     public void GrabIngredients(Ingredients ingredientsToGrab)

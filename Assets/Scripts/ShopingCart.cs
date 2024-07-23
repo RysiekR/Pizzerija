@@ -1,19 +1,16 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
 public class ShopingCart
 {
-    public Ingredients ShoppingCart { get; private set; } = new Ingredients();
+    public Ingredients ShoppingCartIngredients { get; private set; } = new Ingredients();
+    public int LazyBuys = 0;
     public int TotalPrice = 0;
-    
+
     public void BuyCart()
     {
-        if(CanBuyThisCart())
+        if (CanBuyThisCart())
         {
-            //removemone
-            //transfer ingredients
-            //reset everything
+            Pizzeria.Instance.DeductMoney(TotalPrice);
+            ShoppingCartIngredients.TransferAllTo(DeliverySystem.Instance.Ingredients);
+            ClearCart();
         }
     }
     public bool CanBuyThisCart()
@@ -22,31 +19,65 @@ public class ShopingCart
     }
     public void AddDough()
     {
-
+        ShoppingCartIngredients.AddDough(1);
+        TotalPrice += DeliverySystem.Instance.DoughPrice;
     }
-    public void RemoveDough() 
+    public void RemoveDough()
     {
-    
+        if (ShoppingCartIngredients.DoughAmount > 0)
+        {
+            ShoppingCartIngredients.Remove(1, 0, 0);
+            TotalPrice -= DeliverySystem.Instance.DoughPrice;
+        }
     }
     public void AddSauce()
     {
-
+        ShoppingCartIngredients.AddSauce(1);
+        TotalPrice += DeliverySystem.Instance.SaucePrice;
     }
     public void RemoveSauce()
     {
-
+        if (ShoppingCartIngredients.SauceAmount > 0)
+        {
+            ShoppingCartIngredients.Remove(0, 1, 0);
+            TotalPrice -= DeliverySystem.Instance.SaucePrice;
+        }
     }
     public void AddToppings()
     {
-
+        ShoppingCartIngredients.AddToppings(1);
+        TotalPrice += DeliverySystem.Instance.ToppingsPrice;
     }
     public void RemoveToppings()
     {
-
+        if(ShoppingCartIngredients.ToppingsAmount > 0)
+        {
+            ShoppingCartIngredients.Remove(0, 0, 1);
+            TotalPrice -= DeliverySystem.Instance.ToppingsPrice;
+        }
+    }
+    public void AddLazyBuy()
+    {
+        ShoppingCartIngredients.AddDough(1);
+        ShoppingCartIngredients.AddSauce(1);
+        ShoppingCartIngredients.AddToppings(1);
+        LazyBuys++;
+        TotalPrice += DeliverySystem.Instance.LazyBuyPrice;
+    }
+    public void RemoveLazyBuy()
+    {
+        if (LazyBuys > 0)
+        {
+            LazyBuys--;
+            ShoppingCartIngredients.Remove(1, 1, 1);
+            TotalPrice -= DeliverySystem.Instance.LazyBuyPrice;
+        }
     }
 
-    private void ClearCart()
+    public void ClearCart()
     {
-
+        LazyBuys = 0;
+        TotalPrice = 0;
+        ShoppingCartIngredients = new Ingredients();
     }
 }
