@@ -9,7 +9,8 @@ public class ShopingCart
         if (CanBuyThisCart())
         {
             Pizzeria.Instance.DeductMoney(TotalPrice);
-            ShoppingCartIngredients.TransferAllTo(DeliverySystem.Instance.Ingredients);
+            //ShoppingCartIngredients.TransferAllTo(DeliverySystem.Instance.Ingredients);
+            DeliverySystem.Instance.AddDeliveryCarToQueue(ShoppingCartIngredients);
             ClearCart();
         }
     }

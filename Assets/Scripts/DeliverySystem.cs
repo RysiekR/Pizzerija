@@ -1,12 +1,17 @@
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class DeliverySystem : MonoBehaviour
 {
-    public static List<DeliveryCar> deliveryCars = new List<DeliveryCar>();
+    [SerializeField] GameObject DeliveryCarPrefab;
+    //public static List<DeliveryCar> deliveryCars = new List<DeliveryCar>();
     public static DeliverySystem Instance;
-    public Ingredients Ingredients;
+    //public Ingredients Ingredients;
     public ShopingCart ShopingCart;
+
+    private Queue<Ingredients> IngredientsDeliveryQueue = new Queue<Ingredients>(); 
+
     public int DoughPrice { get; private set; } = 3;
     public int SaucePrice { get; private set; } = 1;
     public int ToppingsPrice { get; private set; } = 2;
@@ -21,30 +26,30 @@ public class DeliverySystem : MonoBehaviour
             Instance = this;
             DontDestroyOnLoad(gameObject);
         }
-        Ingredients = new Ingredients(2, 2, 2);
+        //Ingredients = new Ingredients(2, 2, 2);
         ShopingCart = new ShopingCart();
         CalculateLazyBuyPrice();
     }
 
     private void Update()
     {
-        if (deliveryCars.Count != 0)
+        /*if (deliveryCars.Count != 0)
         {
             TransferToDeliveryCar();
-        }
+        }*/
     }
 
-    public bool HasAnyIngredients()
+/*    public bool HasAnyIngredients()
     {
         return Ingredients.HasAny();
     }
-
-    public void TransferIngredientsTo(DeliveryCar deliveryCar)
+*/
+    /*public void TransferIngredientsTo(DeliveryCar deliveryCar)
     {
         Ingredients.TransferAllTo(deliveryCar.CarIngredients);
-    }
+    }*/
 
-    public void BuyDough()
+/*    public void BuyDough()
     {
         if (Pizzeria.Instance.CanPayWithMoney(DoughPrice))
         {
@@ -81,17 +86,29 @@ public class DeliverySystem : MonoBehaviour
             Ingredients.AddSauce(1);
             Ingredients.AddToppings(1);
         }
-    }
+    }*/
     private void CalculateLazyBuyPrice()
     {
         LazyBuyPrice = DoughPrice + SaucePrice + ToppingsPrice + 3;
 
     }
 
-    public void TransferToDeliveryCar()
+    /*public void TransferToDeliveryCar()
     {
         TransferIngredientsTo(deliveryCars[0]);
+    }*/
+
+    public void AddDeliveryCarToQueue(Ingredients ingredientsToAdd)
+    {
+        IngredientsDeliveryQueue.Enqueue(ingredientsToAdd);
     }
 
-
+    public void SendDeliveryCar()
+    {
+        if (IngredientsDeliveryQueue.Count > 0)
+        {
+            GameObject newCar = Instantiate(DeliveryCarPrefab);
+            newCar.GetComponent<DeliveryCar>().SendWithIngredients(IngredientsDeliveryQueue.Dequeue());
+        }
+    }
 }

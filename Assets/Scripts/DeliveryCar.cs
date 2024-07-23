@@ -10,7 +10,7 @@ public class DeliveryCar : MonoBehaviour
     private void Awake()
     {
         CarIngredients = new Ingredients(0,0,0);
-        AddYourselfToList();
+        //AddYourselfToList();
     }
     public void SetCarIngredients(Ingredients ingredients)
     {
@@ -24,6 +24,10 @@ public class DeliveryCar : MonoBehaviour
     private void Update()
     {
         RefreshInfo();
+        if(!CarIngredients.HasAny())
+        {
+            Destroy(gameObject);
+        }
     }
 
     public void RefreshInfo()
@@ -36,12 +40,18 @@ public class DeliveryCar : MonoBehaviour
         return CarIngredients.HasAny();
     }
 
-    private void AddYourselfToList()
+    /*private void AddYourselfToList()
     {
         if(!DeliverySystem.deliveryCars.Contains(this))
         {
             DeliverySystem.deliveryCars.Add(this);
         }
+    }*/
+
+    public void SendWithIngredients(Ingredients ingredients)
+    {
+        CarIngredients = new();
+        ingredients.TransferAllTo(CarIngredients);
     }
 
 }

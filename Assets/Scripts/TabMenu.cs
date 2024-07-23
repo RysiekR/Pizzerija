@@ -21,6 +21,7 @@ public class TabMenu : MonoBehaviour
     private Button LazyBuyMB;
     private Button BuyB;
     private Button CancelB;
+    private Button SendTruckB;
 
     private TextMeshProUGUI PizzeriaDoughAmountT;
     private TextMeshProUGUI DoughAmountT;
@@ -34,6 +35,8 @@ public class TabMenu : MonoBehaviour
     private TextMeshProUGUI LazyBuyAmountT;
     private TextMeshProUGUI LazyBuyPriceT;
     private TextMeshProUGUI TotalPriceT;
+    private TextMeshProUGUI MoneyT;
+
 
     private Button SellPizzaB;
     private Button BuyDeliveryGoblinsB;
@@ -68,6 +71,8 @@ public class TabMenu : MonoBehaviour
         BuyB.onClick.AddListener(DeliverySystem.Instance.ShopingCart.BuyCart);
         CancelB = ShoppingCart.transform.Find("CancelB").GetComponent<Button>();
         CancelB.onClick.AddListener(DeliverySystem.Instance.ShopingCart.ClearCart);
+        SendTruckB = ShoppingCart.transform.Find("SendTruckB").GetComponent<Button>();
+        SendTruckB.onClick.AddListener(DeliverySystem.Instance.SendDeliveryCar);
 
         PizzeriaDoughAmountT = GameObject.Find("PizzeriaDoughAmountT").GetComponent<TextMeshProUGUI>();
         DoughAmountT = GameObject.Find("DoughAmountT").GetComponent<TextMeshProUGUI>();
@@ -81,6 +86,7 @@ public class TabMenu : MonoBehaviour
         LazyBuyAmountT = GameObject.Find("LazyBuyAmountT").GetComponent<TextMeshProUGUI>();
         LazyBuyPriceT = GameObject.Find("LazyBuyPriceT").GetComponent<TextMeshProUGUI>();
         TotalPriceT = GameObject.Find("TotalPriceT").GetComponent<TextMeshProUGUI>();
+        MoneyT = ShoppingCart.transform.Find("MoneyT").GetComponent<TextMeshProUGUI>();
 
         BackToMainMenuB = ShoppingCart.transform.Find("BackB").GetComponent<Button>();
         BackToMainMenuB.onClick.AddListener(() => { menuTracker = 0; });
@@ -145,6 +151,7 @@ public class TabMenu : MonoBehaviour
         LazyBuyAmountT.text = DeliverySystem.Instance.ShopingCart.LazyBuys.ToString();
         LazyBuyPriceT.text = "price: " + DeliverySystem.Instance.LazyBuyPrice.ToString();
         TotalPriceT.text = "Total price: " + DeliverySystem.Instance.ShopingCart.TotalPrice.ToString();
+        MoneyT.text = "Money: " + Pizzeria.Instance.Money.ToString();
 
     }
 

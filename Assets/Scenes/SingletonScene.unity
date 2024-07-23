@@ -299,6 +299,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6c429e6946d4f524788d3337e01d1e20, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  DeliveryCarPrefab: {fileID: 5865445101425659066, guid: 8273f40fb9346de4c896c0025e1b6dc2, type: 3}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
