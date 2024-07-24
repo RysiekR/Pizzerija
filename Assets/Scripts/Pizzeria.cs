@@ -3,7 +3,7 @@ using UnityEngine;
 public class Pizzeria : MonoBehaviour
 {
     public static Pizzeria Instance { get; private set; }
-
+    public Transform PizzeriaInputSpot;
     public int Money { get; private set; } = 0;
     public int PizzasAmmount { get; private set; } = 10;
     public int BasePizzaPrice { get; private set; } = 5;

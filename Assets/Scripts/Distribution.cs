@@ -85,7 +85,7 @@ public class Distribution : MonoBehaviour
 
     public string RestingTimes()
     {
-        StringBuilder sb = new StringBuilder();
+        StringBuilder sb = new();
         foreach (DeliveryGoblin deliveryGoblin in Instance.DeliveryGoblins)
         {
             float restDifference = deliveryGoblin.RestSpeed - deliveryGoblin.RestTime;

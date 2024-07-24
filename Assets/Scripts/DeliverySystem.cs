@@ -6,6 +6,7 @@ public class DeliverySystem : MonoBehaviour
 {
     public static DeliverySystem Instance;
     [SerializeField] GameObject DeliveryCarPrefab;
+    public Transform PickUpSpot;
     public ShopingCart ShopingCart;
     private Queue<Ingredients> IngredientsDeliveryQueue = new Queue<Ingredients>();
     public bool TruckWaiting { get; private set; } = false;
@@ -49,8 +50,9 @@ public class DeliverySystem : MonoBehaviour
     {
         if (IngredientsDeliveryQueue.Count > 0 && !TruckWaiting)
         {
-            TruckWaiting = true;
             GameObject newCar = Instantiate(DeliveryCarPrefab);
+            PickUpSpot = newCar.transform;
+            TruckWaiting = true;
             newCar.GetComponent<DeliveryCar>().SendWithIngredients(IngredientsDeliveryQueue.Dequeue());
         }
     }

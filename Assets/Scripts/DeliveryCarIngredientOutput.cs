@@ -20,6 +20,11 @@ public class DeliveryCarIngredientOutput : MonoBehaviour
                 DeliverySystem.Instance.IngredientsPickedUp();
 
             }
+            if (other.GetComponent<GoblinDeliveryToPizzeria>() != null)
+            {
+                other.GetComponent<GoblinDeliveryToPizzeria>().GoblinInventory.PickUpUpToFullInvFrom(myCar.CarIngredients);
+                DeliverySystem.Instance.IngredientsPickedUp();
+            }
         }
     }
 

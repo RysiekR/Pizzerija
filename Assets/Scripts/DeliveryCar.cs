@@ -29,7 +29,7 @@ public class DeliveryCar : MonoBehaviour
             Destroy(gameObject);
         }
     }
-
+    
     public void RefreshInfo()
     {
         CarBackUGUI.text = $"Dough: {CarIngredients.DoughAmount}\nSauce: {CarIngredients.SauceAmount}\nToppings: {CarIngredients.ToppingsAmount}";
