@@ -8,12 +8,14 @@ public class HUDScript : MonoBehaviour
     TextMeshProUGUI pizzasToSell;
     TextMeshProUGUI goblinsWaiting;
     TextMeshProUGUI noIngredients;
+    TextMeshProUGUI ETANextCarT;
     private void Start()
     {
         money = transform.Find("MoneyTMPT").GetComponent<TextMeshProUGUI>();
         pizzasToSell = transform.Find("PizzasToSellTMPT").GetComponent<TextMeshProUGUI>();
         goblinsWaiting = transform.Find("GoblinsAreWaitingTMPT").GetComponent<TextMeshProUGUI>();
         noIngredients = transform.Find("PizzerijaIngrTMPT").GetComponent<TextMeshProUGUI>();
+        ETANextCarT = transform.Find("ETANextCarT").GetComponent<TextMeshProUGUI>();
     }
 
     void Update()
@@ -22,8 +24,30 @@ public class HUDScript : MonoBehaviour
         UpdatePizzasToSell();
         UpdateGoblinsWaiting();
         UpdateNoIngredients();
+        UpdateETA();
     }
-
+    void UpdateETA()
+    {
+        if (DeliverySystem.Instance.AutomaticDeliveriesON)
+        {
+            if (DeliverySystem.Instance.ETANextCar != 5)
+            {
+                ETANextCarT.text = "Next delivery in: " + DeliverySystem.Instance.ETANextCar.ToString();
+            }
+            else if (!DeliverySystem.Instance.HasDeliveriesInQueue())
+            {
+                ETANextCarT.text = "No orders";
+            }
+            else if (DeliverySystem.Instance.ETANextCar == 5)
+            {
+                ETANextCarT.text = "Delivery waiting";
+            }
+        }
+        else
+        {
+            ETANextCarT.text = "Auto deliveries OFF";
+        }
+    }
     void UpdateMoney()
     {
         money.text = "Money: " + Pizzeria.Instance.Money.ToString();

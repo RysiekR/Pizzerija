@@ -47,7 +47,9 @@ public class DeliveryCar : MonoBehaviour
             DeliverySystem.deliveryCars.Add(this);
         }
     }*/
-
+    /// <summary>
+    /// Used for instantiation of DeliveryCar
+    /// </summary>
     public void SendWithIngredients(Ingredients ingredients)
     {
         CarIngredients = new();

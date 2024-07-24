@@ -1,17 +1,17 @@
+using System.Collections;
 using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
 
 public class DeliverySystem : MonoBehaviour
 {
-    [SerializeField] GameObject DeliveryCarPrefab;
-    //public static List<DeliveryCar> deliveryCars = new List<DeliveryCar>();
     public static DeliverySystem Instance;
-    //public Ingredients Ingredients;
+    [SerializeField] GameObject DeliveryCarPrefab;
     public ShopingCart ShopingCart;
-
-    private Queue<Ingredients> IngredientsDeliveryQueue = new Queue<Ingredients>(); 
-
+    private Queue<Ingredients> IngredientsDeliveryQueue = new Queue<Ingredients>();
+    public bool TruckWaiting { get; private set; } = false;
+    public bool AutomaticDeliveriesON { get; private set; } = false;
+    public float ETANextCar { get; private set; } = 5f;
+    private Coroutine sendingTrucksCoroutine;
     public int DoughPrice { get; private set; } = 3;
     public int SaucePrice { get; private set; } = 1;
     public int ToppingsPrice { get; private set; } = 2;
@@ -26,77 +26,19 @@ public class DeliverySystem : MonoBehaviour
             Instance = this;
             DontDestroyOnLoad(gameObject);
         }
-        //Ingredients = new Ingredients(2, 2, 2);
         ShopingCart = new ShopingCart();
         CalculateLazyBuyPrice();
     }
-
     private void Update()
     {
-        /*if (deliveryCars.Count != 0)
-        {
-            TransferToDeliveryCar();
-        }*/
+        ETACounddown();
     }
 
-/*    public bool HasAnyIngredients()
-    {
-        return Ingredients.HasAny();
-    }
-*/
-    /*public void TransferIngredientsTo(DeliveryCar deliveryCar)
-    {
-        Ingredients.TransferAllTo(deliveryCar.CarIngredients);
-    }*/
-
-/*    public void BuyDough()
-    {
-        if (Pizzeria.Instance.CanPayWithMoney(DoughPrice))
-        {
-            Pizzeria.Instance.DeductMoney(DoughPrice);
-            Ingredients.AddDough(1);
-        }
-    }
-
-    public void BuySauce()
-    {
-        if (Pizzeria.Instance.CanPayWithMoney(SaucePrice))
-        {
-            Pizzeria.Instance.DeductMoney(SaucePrice);
-            Ingredients.AddSauce(1);
-        }
-
-    }
-
-    public void BuyToppings()
-    {
-        if (Pizzeria.Instance.CanPayWithMoney(ToppingsPrice))
-        {
-            Pizzeria.Instance.DeductMoney(ToppingsPrice);
-            Ingredients.AddToppings(1);
-        }
-    }
-
-    public void LazyBuy()
-    {
-        if (Pizzeria.Instance.CanPayWithMoney(LazyBuyPrice))
-        {
-            Pizzeria.Instance.DeductMoney(LazyBuyPrice);
-            Ingredients.AddDough(1);
-            Ingredients.AddSauce(1);
-            Ingredients.AddToppings(1);
-        }
-    }*/
     private void CalculateLazyBuyPrice()
     {
         LazyBuyPrice = DoughPrice + SaucePrice + ToppingsPrice + 3;
 
     }
-
-    /*public void TransferToDeliveryCar()
-    {
-        TransferIngredientsTo(deliveryCars[0]);
-    }*/
 
     public void AddDeliveryCarToQueue(Ingredients ingredientsToAdd)
     {
@@ -105,10 +47,74 @@ public class DeliverySystem : MonoBehaviour
 
     public void SendDeliveryCar()
     {
-        if (IngredientsDeliveryQueue.Count > 0)
+        if (IngredientsDeliveryQueue.Count > 0 && !TruckWaiting)
         {
+            TruckWaiting = true;
             GameObject newCar = Instantiate(DeliveryCarPrefab);
             newCar.GetComponent<DeliveryCar>().SendWithIngredients(IngredientsDeliveryQueue.Dequeue());
         }
+    }
+    /// <summary>
+    /// change TruckWaiting to false
+    /// </summary>
+    public void IngredientsPickedUp()
+    {
+        TruckWaiting = false;
+    }
+
+    public void AutomaticSendOfTrucks()
+    {
+        if (sendingTrucksCoroutine == null)
+        {
+            AutomaticDeliveriesON = true;
+            sendingTrucksCoroutine = StartCoroutine(SendAfterTime(5));
+        }
+    }
+    public void StopAutomaticSendOfTrucks()
+    {
+        if (sendingTrucksCoroutine != null)
+        {
+            AutomaticDeliveriesON = false;
+            StopCoroutine(sendingTrucksCoroutine);
+            sendingTrucksCoroutine = null;
+        }
+    }
+    private void ETACounddown()
+    {
+        if (IngredientsDeliveryQueue.Count > 0)
+        {
+            if (sendingTrucksCoroutine != null)
+            {
+                if (!TruckWaiting)
+                {
+                    ETANextCar -= Time.deltaTime;
+                }
+                else
+                {
+                    ETANextCar = 5f;
+                }
+            }
+            else
+            {
+                ETANextCar = 5f;
+            }
+        }
+        else
+        {
+            ETANextCar = 5f;
+        }
+    }
+    IEnumerator SendAfterTime(float time)
+    {
+        while (true)
+        {
+            yield return new WaitForSeconds(time);
+
+            SendDeliveryCar();
+        }
+    }
+    public bool HasDeliveriesInQueue()
+    {
+        return IngredientsDeliveryQueue.Count > 0;
     }
 }

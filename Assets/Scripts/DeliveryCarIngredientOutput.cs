@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class IngredientOutput : MonoBehaviour
+public class DeliveryCarIngredientOutput : MonoBehaviour
 {
     DeliveryCar myCar;
 
@@ -17,6 +17,8 @@ public class IngredientOutput : MonoBehaviour
             if (other.GetComponent<PlayerLogic>() != null)
             {
                 other.GetComponent<PlayerLogic>().GrabIngredients(myCar.CarIngredients);
+                DeliverySystem.Instance.IngredientsPickedUp();
+
             }
         }
     }

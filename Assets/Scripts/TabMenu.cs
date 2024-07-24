@@ -21,7 +21,8 @@ public class TabMenu : MonoBehaviour
     private Button LazyBuyMB;
     private Button BuyB;
     private Button CancelB;
-    private Button SendTruckB;
+    private Button StartSendingTrucksB;
+    private Button StopSendingTrucksB;
 
     private TextMeshProUGUI PizzeriaDoughAmountT;
     private TextMeshProUGUI DoughAmountT;
@@ -71,8 +72,11 @@ public class TabMenu : MonoBehaviour
         BuyB.onClick.AddListener(DeliverySystem.Instance.ShopingCart.BuyCart);
         CancelB = ShoppingCart.transform.Find("CancelB").GetComponent<Button>();
         CancelB.onClick.AddListener(DeliverySystem.Instance.ShopingCart.ClearCart);
-        SendTruckB = ShoppingCart.transform.Find("SendTruckB").GetComponent<Button>();
-        SendTruckB.onClick.AddListener(DeliverySystem.Instance.SendDeliveryCar);
+        StartSendingTrucksB = ShoppingCart.transform.Find("StartSendingTrucksB").GetComponent<Button>();
+        StartSendingTrucksB.onClick.AddListener(DeliverySystem.Instance.AutomaticSendOfTrucks);
+        StopSendingTrucksB = ShoppingCart.transform.Find("StopSendingTrucksB").GetComponent<Button>();
+        StopSendingTrucksB.onClick.AddListener(DeliverySystem.Instance.StopAutomaticSendOfTrucks);
+
 
         PizzeriaDoughAmountT = GameObject.Find("PizzeriaDoughAmountT").GetComponent<TextMeshProUGUI>();
         DoughAmountT = GameObject.Find("DoughAmountT").GetComponent<TextMeshProUGUI>();
@@ -105,7 +109,13 @@ public class TabMenu : MonoBehaviour
         RefreshPizzaText();
         RefreshIngridients();
         BuyDeliveryGoblinsB.gameObject.SetActive(Pizzeria.Instance.PizzaPrice > 6);
+        AutoDeliveries();
 
+    }
+    private void AutoDeliveries()
+    {
+        StartSendingTrucksB.gameObject.SetActive(!DeliverySystem.Instance.AutomaticDeliveriesON);
+        StopSendingTrucksB.gameObject.SetActive(DeliverySystem.Instance.AutomaticDeliveriesON);
     }
 
     private void RefreshMoneyText()
@@ -122,23 +132,6 @@ public class TabMenu : MonoBehaviour
 
     private void RefreshIngridients()
     {
-        /*DoughUGUI.text = "Dough: " + Pizzeria.Instance.Ingredients.DoughAmount.ToString();
-        SauceUGUI.text = "Sauce: " + Pizzeria.Instance.Ingredients.SauceAmount.ToString();
-        ToppingsUGUI.text = "Toppings: " + Pizzeria.Instance.Ingredients.ToppingsAmount.ToString();
-        LazyBuyUGUI.text = "Lazy buy cost more!";
-
-        if (Pizzeria.Instance.Money > DeliverySystem.Instance.DoughPrice) DoughButtonText.text = $"Buy(cost: {DeliverySystem.Instance.DoughPrice})";
-        else DoughButtonText.text = "Need: " + DeliverySystem.Instance.DoughPrice;
-
-        if (Pizzeria.Instance.Money > DeliverySystem.Instance.SaucePrice) SauceButtunText.text = $"Buy(cost: {DeliverySystem.Instance.SaucePrice})";
-        else SauceButtunText.text = "Need: " + DeliverySystem.Instance.SaucePrice;
-
-        if (Pizzeria.Instance.Money > DeliverySystem.Instance.ToppingsPrice) ToppingsButtonText.text = $"Buy(cost: {DeliverySystem.Instance.ToppingsPrice})";
-        else ToppingsButtonText.text = "Need: " + DeliverySystem.Instance.ToppingsPrice;
-
-        if (Pizzeria.Instance.Money > DeliverySystem.Instance.LazyBuyPrice) LazyBuyButtonText.text = $"Buy(cost: {DeliverySystem.Instance.LazyBuyPrice})";
-        else LazyBuyButtonText.text = "Need: " + DeliverySystem.Instance.LazyBuyPrice;
-*/
         PizzeriaDoughAmountT.text = "in pizzerija:" + Pizzeria.Instance.Ingredients.DoughAmount.ToString();
         PizzeriaSauceAmountT.text = "in pizzerija:" + Pizzeria.Instance.Ingredients.SauceAmount.ToString();
         PizzeriaToppingsAmountT.text = "in pizzerija:" + Pizzeria.Instance.Ingredients.ToppingsAmount.ToString();
