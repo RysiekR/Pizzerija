@@ -4,6 +4,7 @@ public class Pizzeria : MonoBehaviour
 {
     public static Pizzeria Instance { get; private set; }
     public Transform PizzeriaInputSpot;
+    public Transform PizzeriaOutputSpot;
     public int Money { get; private set; } = 0;
     public int PizzasAmmount { get; private set; } = 10;
     public int BasePizzaPrice { get; private set; } = 5;
@@ -114,6 +115,10 @@ public class Pizzeria : MonoBehaviour
     public void RemoveAllPizzas()
     {
         PizzasAmmount = 0;
+    }
+    public void RemovePizzas(int howMuch)
+    {
+        PizzasAmmount -= howMuch;
     }
     public void IncreasePizzaSold(int howMuch)
     {

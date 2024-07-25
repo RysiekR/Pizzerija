@@ -6,6 +6,10 @@ using UnityEngine;
 public class DistributionInput : MonoBehaviour
 {
     [SerializeField] TextMeshProUGUI DeliveryHUD;
+    private void Start()
+    {
+        Distribution.Instance.DistributionInputSpot = transform;
+    }
     private void Update()
     {
         RefreshText();
@@ -22,6 +26,10 @@ public class DistributionInput : MonoBehaviour
         if (other.GetComponent<PlayerLogic>() != null)
         {
             Distribution.Instance.ReceivePizzas(other.GetComponent<PlayerLogic>().DropPizzas());
+        }
+        if (other.GetComponent<GoblinTransporter>() != null)
+        {
+            Distribution.Instance.ReceivePizzas(other.GetComponent<GoblinTransporter>().GoblinInventory.PassPizzas());
         }
     }
 }

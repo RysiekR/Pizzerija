@@ -8,7 +8,7 @@ public class DeliverySystem : MonoBehaviour
     [SerializeField] GameObject DeliveryCarPrefab;
     public Transform PickUpSpot;
     public ShopingCart ShopingCart;
-    private Queue<Ingredients> IngredientsDeliveryQueue = new Queue<Ingredients>();
+    private Queue<Ingredients> IngredientsDeliveryQueue = new();
     public bool TruckWaiting { get; private set; } = false;
     public bool AutomaticDeliveriesON { get; private set; } = false;
     public float ETANextCar { get; private set; } = 5f;
@@ -59,7 +59,7 @@ public class DeliverySystem : MonoBehaviour
     /// <summary>
     /// change TruckWaiting to false
     /// </summary>
-    public void IngredientsPickedUp()
+    public void DeliveryCarIngredientsEmpty()
     {
         TruckWaiting = false;
     }

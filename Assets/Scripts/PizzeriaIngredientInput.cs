@@ -14,9 +14,9 @@ public class PizzeriaIngredientInput : MonoBehaviour
         {
             other.GetComponent<PlayerLogic>().DropIngredients(Pizzeria.Instance.Ingredients);
         }
-        if (other.GetComponent<GoblinDeliveryToPizzeria>() != null)
+        if (other.GetComponent<GoblinTransporter>() != null)
         {
-            other.GetComponent<GoblinDeliveryToPizzeria>().GoblinInventory.PassIngredients().TransferAllTo(Pizzeria.Instance.Ingredients);
+            other.GetComponent<GoblinTransporter>().GoblinInventory.PassIngredients().TransferAllTo(Pizzeria.Instance.Ingredients);
         }
     }
 }

@@ -6,6 +6,7 @@ using UnityEngine;
 public class Distribution : MonoBehaviour
 {
     public static Distribution Instance;
+    public Transform DistributionInputSpot;
     public int PizzaAmmount { get; private set; } = 0;
     public List<DeliveryGoblin> DeliveryGoblins { get; private set; } = new List<DeliveryGoblin>();
 

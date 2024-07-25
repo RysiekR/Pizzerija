@@ -17,15 +17,24 @@ public class DeliveryCarIngredientOutput : MonoBehaviour
             if (other.GetComponent<PlayerLogic>() != null)
             {
                 other.GetComponent<PlayerLogic>().GrabIngredients(myCar.CarIngredients);
-                DeliverySystem.Instance.IngredientsPickedUp();
-
+                if (!CheckForIngredients())
+                {
+                    DeliverySystem.Instance.DeliveryCarIngredientsEmpty();
+                }
             }
-            if (other.GetComponent<GoblinDeliveryToPizzeria>() != null)
+            if (other.GetComponent<GoblinTransporter>() != null)
             {
-                other.GetComponent<GoblinDeliveryToPizzeria>().GoblinInventory.PickUpUpToFullInvFrom(myCar.CarIngredients);
-                DeliverySystem.Instance.IngredientsPickedUp();
+                other.GetComponent<GoblinTransporter>().GoblinInventory.PickUpUpToFullInvFrom(myCar.CarIngredients);
+                if (!CheckForIngredients())
+                {
+                    DeliverySystem.Instance.DeliveryCarIngredientsEmpty();
+                }
             }
         }
     }
 
+    private bool CheckForIngredients()
+    {
+        return myCar.HasAnyIngredients();
+    }
 }

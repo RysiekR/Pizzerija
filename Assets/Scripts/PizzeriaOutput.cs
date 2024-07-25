@@ -6,7 +6,10 @@ using UnityEngine;
 public class PizzeriaOutput : MonoBehaviour
 {
     [SerializeField] TextMeshProUGUI HowManyPizzas;
-
+    private void Start()
+    {
+        Pizzeria.Instance.PizzeriaOutputSpot = transform;
+    }
     private void Update()
     {
         RefreshText();
@@ -26,6 +29,12 @@ public class PizzeriaOutput : MonoBehaviour
                 if (other.GetComponent<PlayerLogic>() != null)
                 {
                     other.GetComponent<PlayerLogic>().GrabPizzas(Pizzeria.Instance.PizzasAmmount);
+                }
+            if (other.GetComponent<GoblinTransporter>() != null)
+                {
+                    int i = other.GetComponent<GoblinTransporter>().GoblinInventory.HowMuchFreeSpace();
+                    other.GetComponent<GoblinTransporter>().GoblinInventory.PickUpPizzaUpToFullInv(Pizzeria.Instance.PizzasAmmount);
+                    Pizzeria.Instance.RemovePizzas(i);
                 }
             }
         }
