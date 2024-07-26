@@ -4,102 +4,33 @@ using UnityEngine.AI;
 
 public class GoblinTransporter : MonoBehaviour
 {
-
-    [SerializeField] private Transform RestingSpot;
+    [SerializeField] public Transform RestingSpot;
     [SerializeField] private GameObject IngredientsVisual;
-    private NavMeshAgent NavMeshAgentGoblin;
+    [SerializeField] private GameObject PizzaBox;
+    public NavMeshAgent NavMeshAgentGoblin;
     public GoblinInventory GoblinInventory;
-    public TransportGoblinState State = TransportGoblinState.WalkingToRest;
+    public GoblinState State {  get; private set; }
+    //public TransportGoblinState State = TransportGoblinState.WalkingToRest;
     private void Start()
     {
         GoblinInventory = new();
         NavMeshAgentGoblin = GetComponent<NavMeshAgent>();
+        SetState(new WalkingToRestState(this));
     }
 
     private void Update()
     {
         IngredientsVisual.SetActive(GoblinInventory.HasAnything());
-        UpdateState();
-        Behave();
-    }
-    void UpdateState()
-    {
-        if (GoblinInventory.HasAnything())
-        {
-            //tutaj moze byc if co ma to tam idzie, ale zawsze return zeby zawsze doniesc jak cos ma
-            if (GoblinInventory.HasPizza() && Distribution.Instance.DeliveryGoblins.Count > 0)
-            {
-                State = TransportGoblinState.TransportPizzaToDistribution;
-                return;
-            }
-            if (GoblinInventory.HasIngredients())
-            {
-                State = TransportGoblinState.DeliveringIngredientsToPizzeria;
-                return;
-            }
-        }
-        //tutaj moze byc if ktory albo sprawdza czy jest cos do roboty albo priorytet
-        if (Pizzeria.Instance.PizzasAmmount > 0 && Distribution.Instance.DeliveryGoblins.Count > 0)
-        {
-            State = TransportGoblinState.WalkingToPickUpPizza;
-            return;
-        }
-        if (DeliverySystem.Instance.TruckWaiting && DeliverySystem.Instance.PickUpSpot != null)
-        {
-            State = TransportGoblinState.WalkingForIngredientsToTruck;
-            return;
-        }
-        //jak sie nic nie wykonalo to idzie odpoczac
-        State = TransportGoblinState.WalkingToRest;
+        PizzaBox.SetActive(GoblinInventory.HasPizza());
+        State.UpdateState();
+        State.ExecuteBehaviour();
     }
 
-    void Behave()
+    public void SetState(GoblinState newState)
     {
-        switch (this.State)
-        {
-            case TransportGoblinState.WalkingToRest:
-                WalkTowardsRest(); break;
-            case TransportGoblinState.WalkingForIngredientsToTruck:
-                WalkForIngredientsToTruck(); break;
-            case TransportGoblinState.Waiting:
-                WaitingState(); break;
-            case TransportGoblinState.DeliveringIngredientsToPizzeria:
-                DeliverIngredientsToPizzeria(); break;
-            case TransportGoblinState.TransportPizzaToDistribution:
-                WalkToDropOffPizza(); break;
-            case TransportGoblinState.WalkingToPickUpPizza:
-                WalkToPickUpPizza(); break;
-            default:
-                WalkTowardsRest(); break;
-        }
+        State = newState;
     }
-    void WalkToDropOffPizza()
-    {
-        NavMeshAgentGoblin.SetDestination(Distribution.Instance.DistributionInputSpot.position);
-    }
-    void WalkToPickUpPizza()
-    {
-        NavMeshAgentGoblin.SetDestination(Pizzeria.Instance.PizzeriaOutputSpot.position);
-    }
-    void WalkTowardsRest()
-    {
-        NavMeshAgentGoblin.SetDestination(RestingSpot.position);//moze jakis collider zeby ustawial state na waiting i wrzucal go do queue roboty
-    }
-    void WalkForIngredientsToTruck()
-    {
-        if (DeliverySystem.Instance.PickUpSpot != null)
-        {
-            NavMeshAgentGoblin.SetDestination(DeliverySystem.Instance.PickUpSpot.position);
-        }
-    }
-    void WaitingState()
-    {
 
-    }
-    void DeliverIngredientsToPizzeria()
-    {
-        NavMeshAgentGoblin.SetDestination(Pizzeria.Instance.PizzeriaInputSpot.position);
-    }
 }
 public enum TransportGoblinState
 {
@@ -174,7 +105,7 @@ public class GoblinInventory
         if (toppings > 0)
         {
             int i;
-            if (toppings >= 0)
+            if (toppings >= HowMuchFreeSpace())
             {
                 i = HowMuchFreeSpace();
             }

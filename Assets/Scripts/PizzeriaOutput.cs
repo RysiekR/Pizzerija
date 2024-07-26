@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
@@ -32,7 +33,7 @@ public class PizzeriaOutput : MonoBehaviour
                 }
             if (other.GetComponent<GoblinTransporter>() != null)
                 {
-                    int i = other.GetComponent<GoblinTransporter>().GoblinInventory.HowMuchFreeSpace();
+                    int i = Math.Min(other.GetComponent<GoblinTransporter>().GoblinInventory.HowMuchFreeSpace(),Pizzeria.Instance.PizzasAmmount);
                     other.GetComponent<GoblinTransporter>().GoblinInventory.PickUpPizzaUpToFullInv(Pizzeria.Instance.PizzasAmmount);
                     Pizzeria.Instance.RemovePizzas(i);
                 }
