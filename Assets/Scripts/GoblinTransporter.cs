@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -7,10 +8,11 @@ public class GoblinTransporter : MonoBehaviour
     [SerializeField] public Transform RestingSpot;
     [SerializeField] private GameObject IngredientsVisual;
     [SerializeField] private GameObject PizzaBox;
+    public Animator Animator;
     public NavMeshAgent NavMeshAgentGoblin;
     public GoblinInventory GoblinInventory;
-    public GoblinState State {  get; private set; }
-    //public TransportGoblinState State = TransportGoblinState.WalkingToRest;
+    public GoblinState State { get; private set; }
+    private bool IsChangingState = false;
     private void Start()
     {
         GoblinInventory = new();
@@ -20,26 +22,49 @@ public class GoblinTransporter : MonoBehaviour
 
     private void Update()
     {
-        IngredientsVisual.SetActive(GoblinInventory.HasAnything());
-        PizzaBox.SetActive(GoblinInventory.HasPizza());
-        State.UpdateState();
-        State.ExecuteBehaviour();
+        Animator.SetBool("IsCarrying", GoblinInventory.HasAnything());
+        Animator.SetBool("IsMoving", State is not WaitingState);
+        StateExecution();
+    }
+
+    private void StateExecution()
+    {
+        if (!IsChangingState)
+        {
+            State.UpdateState();
+            State.ExecuteBehaviour();
+        }
+        CheckIfNotCarrying();
     }
 
     public void SetState(GoblinState newState)
     {
+        if (newState is DeliveringIngredientsToPizzeriaState|| newState is WalkToDropOffPizzaState)
+        {
+            NavMeshAgentGoblin.isStopped = true;
+            IsChangingState = true;
+            StartCoroutine(ChangingStateVisuals());
+        }
         State = newState;
     }
+    IEnumerator ChangingStateVisuals()
+    {
 
-}
-public enum TransportGoblinState
-{
-    WalkingToRest,
-    Waiting,
-    DeliveringIngredientsToPizzeria,
-    WalkingForIngredientsToTruck,
-    TransportPizzaToDistribution,
-    WalkingToPickUpPizza,
+        yield return new WaitForSeconds(0.8f);
+        IngredientsVisual.SetActive(GoblinInventory.HasIngredients());
+        PizzaBox.SetActive(GoblinInventory.HasPizza());
+        NavMeshAgentGoblin.isStopped = false;
+        IsChangingState = false;
+    }
+    void CheckIfNotCarrying()
+    {
+        if (!GoblinInventory.HasAnything())
+        {
+            IngredientsVisual.SetActive(false);
+            PizzaBox.SetActive(false);
+        }
+
+    }
 }
 
 public class GoblinInventory
@@ -205,3 +230,13 @@ public class GoblinInventory
         if (CarryCappacity <= 0) CarryCappacity = 1;
     }
 }
+
+/*public enum TransportGoblinState
+{
+    WalkingToRest,
+    Waiting,
+    DeliveringIngredientsToPizzeria,
+    WalkingForIngredientsToTruck,
+    TransportPizzaToDistribution,
+    WalkingToPickUpPizza,
+}*/

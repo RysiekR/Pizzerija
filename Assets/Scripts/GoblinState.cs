@@ -1,3 +1,6 @@
+using UnityEngine;
+
+[System.Serializable]
 public abstract class GoblinState
 {
     protected GoblinTransporter Goblin;
@@ -50,7 +53,7 @@ public class WaitingState : GoblinState
     public override void ExecuteBehaviour()
     {
         //walk in a circle
-        Goblin.NavMeshAgentGoblin.SetDestination(Goblin.transform.right);
+        Goblin.NavMeshAgentGoblin.Move(Goblin.transform.right*Time.deltaTime);
     }
 }
 public class DeliveringIngredientsToPizzeriaState : GoblinState
