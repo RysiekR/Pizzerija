@@ -9,10 +9,19 @@ public class ShopingCart
         if (CanBuyThisCart())
         {
             Pizzeria.Instance.DeductMoney(TotalPrice);
-            //ShoppingCartIngredients.TransferAllTo(DeliverySystem.Instance.Ingredients);
+            ModifyCartWithBonus();
             DeliverySystem.Instance.AddDeliveryCarToQueue(ShoppingCartIngredients);
             ClearCart();
         }
+    }
+    void ModifyCartWithBonus()
+    {
+        if (DayCycle.TodayBonus == TodayBonus.Dough)
+            ShoppingCartIngredients.AddDough(ShoppingCartIngredients.DoughAmount);
+        if (DayCycle.TodayBonus == TodayBonus.Sauce)
+            ShoppingCartIngredients.AddSauce(ShoppingCartIngredients.SauceAmount);
+        if (DayCycle.TodayBonus == TodayBonus.Toppings)
+            ShoppingCartIngredients.AddToppings(ShoppingCartIngredients.ToppingsAmount);
     }
     public bool CanBuyThisCart()
     {
@@ -51,7 +60,7 @@ public class ShopingCart
     }
     public void RemoveToppings()
     {
-        if(ShoppingCartIngredients.ToppingsAmount > 0)
+        if (ShoppingCartIngredients.ToppingsAmount > 0)
         {
             ShoppingCartIngredients.Remove(0, 0, 1);
             TotalPrice -= DeliverySystem.Instance.ToppingsPrice;

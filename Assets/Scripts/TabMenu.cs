@@ -37,6 +37,7 @@ public class TabMenu : MonoBehaviour
     private TextMeshProUGUI LazyBuyPriceT;
     private TextMeshProUGUI TotalPriceT;
     private TextMeshProUGUI MoneyT;
+    private TextMeshProUGUI TodayPromotionT;
 
 
     private Button SellPizzaB;
@@ -78,19 +79,20 @@ public class TabMenu : MonoBehaviour
         StopSendingTrucksB.onClick.AddListener(DeliverySystem.Instance.StopAutomaticSendOfTrucks);
 
 
-        PizzeriaDoughAmountT = GameObject.Find("PizzeriaDoughAmountT").GetComponent<TextMeshProUGUI>();
-        DoughAmountT = GameObject.Find("DoughAmountT").GetComponent<TextMeshProUGUI>();
-        DoughPriceT = GameObject.Find("DoughPriceT").GetComponent<TextMeshProUGUI>();
-        PizzeriaSauceAmountT = GameObject.Find("PizzeriaSauceAmountT").GetComponent<TextMeshProUGUI>();
-        SauceAmountT = GameObject.Find("SauceAmountT").GetComponent<TextMeshProUGUI>();
-        SaucePriceT = GameObject.Find("SaucePriceT").GetComponent<TextMeshProUGUI>();
-        PizzeriaToppingsAmountT = GameObject.Find("PizzeriaToppingsAmountT").GetComponent<TextMeshProUGUI>();
-        ToppingsAmountT = GameObject.Find("ToppingsAmountT").GetComponent<TextMeshProUGUI>();
-        ToppingsPriceT = GameObject.Find("ToppingsPriceT").GetComponent<TextMeshProUGUI>();
-        LazyBuyAmountT = GameObject.Find("LazyBuyAmountT").GetComponent<TextMeshProUGUI>();
-        LazyBuyPriceT = GameObject.Find("LazyBuyPriceT").GetComponent<TextMeshProUGUI>();
-        TotalPriceT = GameObject.Find("TotalPriceT").GetComponent<TextMeshProUGUI>();
+        PizzeriaDoughAmountT = ShoppingCart.transform.Find("PizzeriaDoughAmountT").GetComponent<TextMeshProUGUI>();
+        DoughAmountT = ShoppingCart.transform.Find("DoughAmountT").GetComponent<TextMeshProUGUI>();
+        DoughPriceT = ShoppingCart.transform.Find("DoughPriceT").GetComponent<TextMeshProUGUI>();
+        PizzeriaSauceAmountT = ShoppingCart.transform.Find("PizzeriaSauceAmountT").GetComponent<TextMeshProUGUI>();
+        SauceAmountT = ShoppingCart.transform.Find("SauceAmountT").GetComponent<TextMeshProUGUI>();
+        SaucePriceT = ShoppingCart.transform.Find("SaucePriceT").GetComponent<TextMeshProUGUI>();
+        PizzeriaToppingsAmountT = ShoppingCart.transform.Find("PizzeriaToppingsAmountT").GetComponent<TextMeshProUGUI>();
+        ToppingsAmountT = ShoppingCart.transform.Find("ToppingsAmountT").GetComponent<TextMeshProUGUI>();
+        ToppingsPriceT = ShoppingCart.transform.Find("ToppingsPriceT").GetComponent<TextMeshProUGUI>();
+        LazyBuyAmountT = ShoppingCart.transform.Find("LazyBuyAmountT").GetComponent<TextMeshProUGUI>();
+        LazyBuyPriceT = ShoppingCart.transform.Find("LazyBuyPriceT").GetComponent<TextMeshProUGUI>();
+        TotalPriceT = ShoppingCart.transform.Find("TotalPriceT").GetComponent<TextMeshProUGUI>();
         MoneyT = ShoppingCart.transform.Find("MoneyT").GetComponent<TextMeshProUGUI>();
+        TodayPromotionT = ShoppingCart.transform.Find("TodayPromotionT").GetComponent<TextMeshProUGUI>();
 
         BackToMainMenuB = ShoppingCart.transform.Find("BackB").GetComponent<Button>();
         BackToMainMenuB.onClick.AddListener(() => { menuTracker = 0; });
@@ -145,6 +147,11 @@ public class TabMenu : MonoBehaviour
         LazyBuyPriceT.text = "price: " + DeliverySystem.Instance.LazyBuyPrice.ToString();
         TotalPriceT.text = "Total price: " + DeliverySystem.Instance.ShopingCart.TotalPrice.ToString();
         MoneyT.text = "Money: " + Pizzeria.Instance.Money.ToString();
+
+        if (DayCycle.IsTodayBonusIngredients())
+            TodayPromotionT.text = "Today promotion: " + DayCycle.TodayBonus.ToString();
+        else
+            TodayPromotionT.text = string.Empty;
 
     }
 
