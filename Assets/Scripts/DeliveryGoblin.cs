@@ -24,6 +24,7 @@
     public void SellPizza()
     {
         Pizzeria.Instance.AddMoney(PizzasAmount * Pizzeria.Instance.PizzaPrice);
+        if(DayCycle.TodayBonus == TodayBonus.SellPrice) Pizzeria.Instance.AddMoney(PizzasAmount * Pizzeria.Instance.PizzaPrice);
         Pizzeria.Instance.IncreasePizzaSold(PizzasAmount);
         PizzasAmount = 0;
         Rested = false;

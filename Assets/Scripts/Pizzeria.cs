@@ -43,6 +43,7 @@ public class Pizzeria : MonoBehaviour
         {
             PizzasAmmount--;
             Money += PizzaPrice;
+            if (DayCycle.TodayBonus == TodayBonus.SellPrice) Money += PizzaPrice;
             IncreasePizzaSold(1);
         }
     }

@@ -1,12 +1,10 @@
 using System;
 using System.Collections;
-using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
 
 public class DayCycle : MonoBehaviour
 {
-    public const float fullDayLength = 60f;
+    public const float fullDayLength = 10f;
     public Day Day { get; private set; } = Day.Unoday;
     public float DayTime { get; private set; } = 0f;
     [SerializeField] private Day DebugDay = Day.Unoday;
@@ -54,7 +52,6 @@ public class DayCycle : MonoBehaviour
         else Day = Day.Unoday;
         ChangeTodayBonus();
         DebugDay = Day;
-
     }
     void ChangeTodayBonus()
     {
@@ -62,6 +59,9 @@ public class DayCycle : MonoBehaviour
         int randIndex = UnityEngine.Random.Range(0, bonuses.Length);
         TodayBonus = bonuses[randIndex];
         DayBonusDebug = TodayBonus;
+        if (HUDScript.Instance != null)
+            HUDScript.Instance.UpdateTodayBonus();
+
     }
     public static bool IsTodayBonusIngredients()
     {

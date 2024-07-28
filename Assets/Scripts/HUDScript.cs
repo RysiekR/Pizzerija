@@ -1,18 +1,35 @@
+using System.Collections;
 using System.Linq;
 using TMPro;
 using UnityEngine;
 
 public class HUDScript : MonoBehaviour
 {
+    public static HUDScript Instance;
     TextMeshProUGUI money;
-    TextMeshProUGUI pizzasToSell;
+    //TextMeshProUGUI pizzasToSell;
     TextMeshProUGUI goblinsWaiting;
     TextMeshProUGUI noIngredients;
     TextMeshProUGUI ETANextCarT;
+    TextMeshProUGUI TodayBonusT;
+    private void Awake()
+    {
+        if (Instance != null && Instance != this)
+        {
+            Destroy(gameObject);
+        }
+        else
+        {
+            Instance = this;
+            DontDestroyOnLoad(gameObject);
+        }
+        TodayBonusT = transform.Find("TodayBonusT").GetComponent <TextMeshProUGUI>();
+    }
+
     private void Start()
     {
         money = transform.Find("MoneyTMPT").GetComponent<TextMeshProUGUI>();
-        pizzasToSell = transform.Find("PizzasToSellTMPT").GetComponent<TextMeshProUGUI>();
+        //pizzasToSell = transform.Find("PizzasToSellTMPT").GetComponent<TextMeshProUGUI>();
         goblinsWaiting = transform.Find("GoblinsAreWaitingTMPT").GetComponent<TextMeshProUGUI>();
         noIngredients = transform.Find("PizzerijaIngrTMPT").GetComponent<TextMeshProUGUI>();
         ETANextCarT = transform.Find("ETANextCarT").GetComponent<TextMeshProUGUI>();
@@ -21,7 +38,7 @@ public class HUDScript : MonoBehaviour
     void Update()
     {
         UpdateMoney();
-        UpdatePizzasToSell();
+        //UpdatePizzasToSell();
         UpdateGoblinsWaiting();
         UpdateNoIngredients();
         UpdateETA();
@@ -48,12 +65,16 @@ public class HUDScript : MonoBehaviour
             ETANextCarT.text = "Auto deliveries OFF";
         }
     }
+    public void UpdateTodayBonus()
+    {
+        TodayBonusT.text = "Today bonus: 2x" + DayCycle.TodayBonus;
+    }
     void UpdateMoney()
     {
         money.text = "Money: " + Pizzeria.Instance.Money.ToString();
     }
 
-    void UpdatePizzasToSell()
+    /*void UpdatePizzasToSell()
     {
         if (Pizzeria.Instance.PizzasAmmount > 0)
         {
@@ -77,7 +98,7 @@ public class HUDScript : MonoBehaviour
                 }
             }
         }
-    }
+    }*/
     void UpdateGoblinsWaiting()
     {
         if (Distribution.Instance.DeliveryGoblins.Count <= 0)
