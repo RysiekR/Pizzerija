@@ -30,12 +30,12 @@ public class PlayerLogic : MonoBehaviour
         IngredientsOnPlayer.TransferAllTo(ingredientsToPut);
     }
 
-    public void GrabPizzas(int howMany)
+/*    public void GrabPizzas(int howMany)
     {
         PizzasAmount += howMany;
         Pizzeria.Instance.RemoveAllPizzas();
     }
-
+*/
     public int DropPizzas()
     {
         if (PizzasAmount > 0)

@@ -40,7 +40,7 @@ public class TabMenu : MonoBehaviour
     private TextMeshProUGUI TodayPromotionT;
 
 
-    private Button SellPizzaB;
+    //private Button SellPizzaB;
     private Button BuyDeliveryGoblinsB;
 
     private Button BackToMainMenuB;
@@ -99,8 +99,8 @@ public class TabMenu : MonoBehaviour
         ChangeToShoppingB = MainMenuFirst.transform.Find("ChangeToShoppingB").GetComponent<Button>();
         ChangeToShoppingB.onClick.AddListener(() => { menuTracker = 1; });
 
-        SellPizzaB = MainMenuFirst.transform.Find("SellPizzaB").GetComponent<Button>();
-        SellPizzaB.onClick.AddListener(Pizzeria.Instance.SellPizzaButton);
+        //SellPizzaB = MainMenuFirst.transform.Find("SellPizzaB").GetComponent<Button>();
+        //SellPizzaB.onClick.AddListener(Pizzeria.Instance.SellPizzaButton);
         BuyDeliveryGoblinsB = MainMenuFirst.transform.Find("BuyDeliveryGoblinB").GetComponent<Button>();
         BuyDeliveryGoblinsB.onClick.AddListener(Distribution.Instance.BuyDeliveryGoblin);
     }
@@ -112,7 +112,6 @@ public class TabMenu : MonoBehaviour
         RefreshIngridients();
         BuyDeliveryGoblinsB.gameObject.SetActive(Pizzeria.Instance.PizzaPrice > 6);
         AutoDeliveries();
-
     }
     private void AutoDeliveries()
     {
@@ -127,7 +126,8 @@ public class TabMenu : MonoBehaviour
 
     private void RefreshPizzaText()
     {
-        PizzasUGUI.text = "Pizzas: " + Pizzeria.Instance.PizzasAmmount.ToString();
+        //PizzasUGUI.text = "Pizzas: " + Pizzeria.Instance.PizzasAmmount.ToString();
+        PizzasUGUI.text = "Pizzas in oven outputs: " + Oven.SumOfReadyPizzas().ToString();
         PizzasSoldUGUI.text = "Pizzas sold: " + Pizzeria.Instance.PizzasSold.ToString();
         PizzaPriceUGUI.text = "Pizza price: " + Pizzeria.Instance.PizzaPrice.ToString();
     }

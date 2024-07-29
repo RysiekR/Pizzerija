@@ -5,18 +5,19 @@ public class Pizzeria : MonoBehaviour
     public static Pizzeria Instance { get; private set; }
     public Transform PizzeriaInputSpot;
     public Transform PizzeriaOutputSpot;
-    public int Money { get; private set; } = 0;
-    public int PizzasAmmount { get; private set; } = 10;
+    public Transform PizzeriaIngredientsShelf;
+    public int Money { get; private set; } = 6;
+    //public int PizzasAmmount { get; private set; } = 10;
     public int BasePizzaPrice { get; private set; } = 5;
     public int PizzaPrice { get; private set; } = 0;
     public int PizzasSold { get; private set; } = 0;
     public Ingredients Ingredients { get; private set; }
 
 
-    private float timeToBakeOnePizza = 1f;
+/*    private float timeToBakeOnePizza = 1f;
     private float bakingTimer = 0f;
     public int OvensAmmount { get; private set; } = 1;
-
+*/
 
     private void Awake()
     {
@@ -27,17 +28,17 @@ public class Pizzeria : MonoBehaviour
             Instance = this;
             DontDestroyOnLoad(gameObject);
         }
-        Ingredients = new Ingredients(2, 2, 2);
+        Ingredients = new Ingredients(5, 5, 5);
         RecalculatePizzaPrice();
     }
 
-    private void FixedUpdate()
+/*    private void FixedUpdate()
     {
-        BakePizza();
+        //BakePizza();
     }
 
-
-    public void SellPizza()
+*/
+/*    public void SellPizza()
     {
         if (PizzasAmmount > 0)
         {
@@ -47,7 +48,7 @@ public class Pizzeria : MonoBehaviour
             IncreasePizzaSold(1);
         }
     }
-
+*/
 
     private void RecalculatePizzaPrice()
     {
@@ -60,7 +61,7 @@ public class Pizzeria : MonoBehaviour
         // Obliczamy now¹ cenê
         PizzaPrice = BasePizzaPrice + priceIncrease;
     }
-    private void BakePizza()
+/*    private void BakePizza()
     {
         if (bakingTimer > timeToBakeOnePizza)
         {
@@ -79,18 +80,18 @@ public class Pizzeria : MonoBehaviour
             bakingTimer += Time.fixedDeltaTime;
         }
     }
-
+*/
     public bool CanBake()
     {
         return Ingredients.HasAtLeastOneOfEach();
     }
 
 
-    public void SellPizzaButton()
+/*    public void SellPizzaButton()
     {
         SellPizza();
     }
-    /// <summary>
+*/    /// <summary>
     /// true when have that much money
     /// </summary>
     public bool CanPayWithMoney(int howMuch)
@@ -113,15 +114,15 @@ public class Pizzeria : MonoBehaviour
         Money += howMuch;
     }
 
-    public void RemoveAllPizzas()
+/*    public void RemoveAllPizzas()
     {
         PizzasAmmount = 0;
     }
-    public void RemovePizzas(int howMuch)
+*//*    public void RemovePizzas(int howMuch)
     {
         PizzasAmmount -= howMuch;
     }
-    public void IncreasePizzaSold(int howMuch)
+*/    public void IncreasePizzaSold(int howMuch)
     {
         if (howMuch > 0)
         {

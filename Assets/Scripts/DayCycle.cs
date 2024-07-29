@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class DayCycle : MonoBehaviour
 {
-    public const float fullDayLength = 10f;
+    public const float fullDayLength = 60f;
     public Day Day { get; private set; } = Day.Unoday;
     public float DayTime { get; private set; } = 0f;
     [SerializeField] private Day DebugDay = Day.Unoday;

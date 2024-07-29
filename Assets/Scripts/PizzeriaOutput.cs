@@ -18,9 +18,10 @@ public class PizzeriaOutput : MonoBehaviour
 
     private void RefreshText()
     {
-        HowManyPizzas.text ="Ready Pizzas: " + Pizzeria.Instance.PizzasAmmount.ToString();
+        //HowManyPizzas.text ="Ready Pizzas: " + Pizzeria.Instance.PizzasAmmount.ToString();
+        HowManyPizzas.text ="Pizzas in oven outputs: " + Oven.SumOfReadyPizzas().ToString();
     }
-    private void OnTriggerEnter(Collider other)
+/*    private void OnTriggerEnter(Collider other)
     {
         if (Pizzeria.Instance.PizzasAmmount > 0)
         {
@@ -40,4 +41,4 @@ public class PizzeriaOutput : MonoBehaviour
             }
         }
     }
-}
+*/}

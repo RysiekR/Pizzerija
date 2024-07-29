@@ -17,7 +17,7 @@ public class DistributionInput : MonoBehaviour
 
     private void RefreshText()
     {
-        DeliveryHUD.text = $"You have {Distribution.Instance.DeliveryGoblins.Count} delivery goblins. \n" +
+        DeliveryHUD.text = $"You have {Distribution.Instance.DeliveryGoblins.Count} distribution goblins. \n" +
             $"They rest for: {Distribution.Instance.RestingTimes()}. \n" +
             $"They have {Distribution.Instance.PizzaAmmount} pizzas to deliver.";
     }

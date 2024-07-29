@@ -16,6 +16,15 @@ public class Ingredients
         SauceAmount = sauceAmount;
         ToppingsAmount = toppingsAmount;
     }
+    /// <summary>
+    /// use in baking oven for a copy to check
+    /// </summary>
+    public Ingredients(Ingredients i)
+    {
+        DoughAmount = i.DoughAmount;
+        SauceAmount= i.SauceAmount;
+        ToppingsAmount = i.ToppingsAmount;
+    }
 
     public bool HasAtLeastOneOfEach()
     {
