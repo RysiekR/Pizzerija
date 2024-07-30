@@ -1,10 +1,12 @@
 using System;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class Oven : MonoBehaviour
 {
     public static List<Oven> ovens = new List<Oven>();
+    public static int OvenCost => ovens.Count * 10;
     public OvenInput ovenInput { get; private set; }
     public OvenOutput ovenOutput { get; private set; }
     public int PizzasAmount { get; private set; } = 0;
@@ -13,9 +15,15 @@ public class Oven : MonoBehaviour
     public Ingredients Ingredients { get; private set; }
     public GoblinTransporter GoblinWithIngredients { get; private set; } = null;
     public GoblinTransporter GoblinForPizza { get; private set; } = null;
+    public Coroutine coroutine = null;
+    GameObject ovenVisMatOff;
+    GameObject ovenVisMatOn;
     private void Awake()
     {
-        ovens.Add(this);
+        if (!ovens.Contains(this))
+        {
+            ovens.Add(this);
+        }
         ovenInput = GetComponentInChildren<OvenInput>();
         ovenInput.SetOven(this);
         ovenOutput = GetComponentInChildren<OvenOutput>();
@@ -23,17 +31,30 @@ public class Oven : MonoBehaviour
         Upgrades = new OvenUpgrades(this);
         Baking = new OvenBaking(this);
         Ingredients = new Ingredients();
+        ovenVisMatOn = transform.Find("OvenVisualOn").GameObject();
+        ovenVisMatOff = transform.Find("OvenVisualOff").GameObject();
     }
     private void Update()
     {
-        if (!Baking.IsBaking)
+        if (!Baking.IsBaking && Ingredients.HasAtLeastOneOfEach() && coroutine == null)
+            coroutine = StartCoroutine(Baking.GetBake());
+
+        ovenVisMatOff.SetActive(!Baking.IsBaking);
+        ovenVisMatOn.SetActive(Baking.IsBaking);
+
+        if (GoblinWithIngredients != null)
         {
-            if (Ingredients.HasAtLeastOneOfEach())
-                StartCoroutine(Baking.Bake());
+            if (GoblinWithIngredients.ovenToHandle == null)
+            {
+                GoblinWithIngredients = null;
+            }
+            else if (GoblinWithIngredients.ovenToHandle != this)
+            {
+                GoblinWithIngredients = null;
+            }
         }
         //Debug.Log(Ingredients.DoughAmount + ", " + Ingredients.SauceAmount + ", " + Ingredients.ToppingsAmount);
         //Debug.Log($"Pizzas ready: {PizzasAmount}");
-
     }
 
     private void OnDestroy()
@@ -51,14 +72,19 @@ public class Oven : MonoBehaviour
     {
         if (other.GetComponent<GoblinTransporter>() != null)
         {
-            other.GetComponent<GoblinTransporter>().GoblinInventory.PassIngredients().TransferAllTo(Ingredients);
-            GoblinWithIngredients = null;
+            if (other.GetComponent<GoblinTransporter>().ovenToHandle == this)
+            {
+                other.GetComponent<GoblinTransporter>().GoblinInventory.PassIngredients().TransferAllTo(Ingredients);
+                GoblinWithIngredients.TargetOvenInput = null;
+                GoblinWithIngredients.ovenToHandle = null;
+                GoblinWithIngredients = null;
+            }
         }
 
     }
     public void TriggerOutput(Collider other)
     {
-        if(other.GetComponent<GoblinTransporter>().TargetOvenOutput != null)
+        if (other.GetComponent<GoblinTransporter>().TargetOvenOutput != null)
         {
             if (other.GetComponent<GoblinTransporter>().TargetOvenOutput == ovenOutput.transform)
             {
@@ -66,6 +92,7 @@ public class Oven : MonoBehaviour
                 other.GetComponent<GoblinTransporter>().GoblinInventory.PickUpPizzaUpToFullInv(PizzasAmount);
                 PizzasAmount -= i;
                 HUDScript.Instance.UpdatePizzasToSell();
+                GoblinForPizza = null;
             }
         }
     }
@@ -92,11 +119,15 @@ public class Oven : MonoBehaviour
             return true;
         return false;
     }
-    public bool HasPizzaToPickUp()
+    public bool NeedIngredients(GoblinTransporter goblinToCheck)
     {
-        if(GoblinForPizza != null)
+        if (GoblinWithIngredients != goblinToCheck)
             return false;
-        if(PizzasAmount > 0) 
+        if (Pizzeria.Instance.Ingredients.DoughAmount > 0 && NeedDough(0))
+            return true;
+        if (Pizzeria.Instance.Ingredients.SauceAmount > 0 && NeedSauce(0))
+            return true;
+        if (Pizzeria.Instance.Ingredients.ToppingsAmount > 0 && NeedToppings(0))
             return true;
         return false;
     }
@@ -112,12 +143,20 @@ public class Oven : MonoBehaviour
         }
         return temp;
     }
+    public bool HasPizzaToPickUp()
+    {
+        if (GoblinForPizza != null)
+            return false;
+        if (PizzasAmount > 0)
+            return true;
+        return false;
+    }
     public static List<Oven> OvensWithPizzaReady()
     {
         List<Oven> temp = new List<Oven>();
         foreach (Oven o in ovens)
         {
-            if(o.HasPizzaToPickUp())
+            if (o.HasPizzaToPickUp())
             {
                 temp.Add(o);
             }
@@ -153,5 +192,14 @@ public class Oven : MonoBehaviour
     public bool NeedToppings(int incomingToppings)
     {
         return Ingredients.ToppingsAmount + incomingToppings < Baking.BakeAmount;
+    }
+    public static void BuyOven()
+    {
+        if(Pizzeria.Instance.Money >= OvenCost)
+        {
+            Pizzeria.Instance.DeductMoney(OvenCost);
+            Instantiate(Pizzeria.Instance.OvenPrefab);
+            ovens[ovens.Count - 1].transform.position = new Vector3(25 + 5*(ovens.Count-1), 0, 12);
+        }
     }
 }

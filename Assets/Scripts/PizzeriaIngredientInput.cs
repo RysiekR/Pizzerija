@@ -10,6 +10,10 @@ public class PizzeriaIngredientInput : MonoBehaviour
     }
     private void OnTriggerEnter(Collider other)
     {
+        if(other.GetComponent<GoblinTransporter>().ovenToHandle != null)
+        {
+            other.GetComponent<GoblinTransporter>().ovenToHandle = null;
+        }
         if (other.GetComponent<PlayerLogic>() != null)
         {
             other.GetComponent<PlayerLogic>().DropIngredients(Pizzeria.Instance.Ingredients);

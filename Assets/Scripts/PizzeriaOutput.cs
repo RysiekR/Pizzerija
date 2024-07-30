@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 
-public class PizzeriaOutput : MonoBehaviour
+/*public class PizzeriaOutput : MonoBehaviour
 {
     [SerializeField] TextMeshProUGUI HowManyPizzas;
     private void Start()
@@ -21,7 +21,7 @@ public class PizzeriaOutput : MonoBehaviour
         //HowManyPizzas.text ="Ready Pizzas: " + Pizzeria.Instance.PizzasAmmount.ToString();
         HowManyPizzas.text ="Pizzas in oven outputs: " + Oven.SumOfReadyPizzas().ToString();
     }
-/*    private void OnTriggerEnter(Collider other)
+*//*    private void OnTriggerEnter(Collider other)
     {
         if (Pizzeria.Instance.PizzasAmmount > 0)
         {
@@ -41,4 +41,5 @@ public class PizzeriaOutput : MonoBehaviour
             }
         }
     }
-*/}
+*//*}
+*/

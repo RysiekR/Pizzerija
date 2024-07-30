@@ -1,4 +1,3 @@
-using System.Linq;
 using UnityEngine;
 
 [System.Serializable]
@@ -20,7 +19,15 @@ public class DeliverToOven : GoblinState
         if (!Goblin.GoblinInventory.HasIngredients())
         {
             Goblin.SetState(new WalkingToRestState(Goblin));
-            Goblin.TargetOvenInput = null;
+            /*            Goblin.ovenToHandle.SetIncomingGoblinWithIngredients(null);
+                        Goblin.TargetOvenInput = null;
+                        Goblin.ovenToHandle = null;
+            */
+            return;
+        }
+        if (Goblin.ovenToHandle == null)
+        {
+            Goblin.SetState(new WalkingToRestState(Goblin));
             return;
         }
     }
@@ -35,6 +42,23 @@ public class WalkingToPickUpIngredientsToOven : GoblinState
     public WalkingToPickUpIngredientsToOven(GoblinTransporter goblin) : base(goblin) { }
     public override void UpdateState()
     {
+        if (Goblin.ovenToHandle != null)
+        {
+            if (Goblin.ovenToHandle.GoblinWithIngredients != Goblin)// && !Goblin.GoblinInventory.HasIngredients())
+            {
+                Goblin.ovenToHandle = null;
+                Goblin.TargetOvenInput = null;
+                Goblin.SetState(new WalkingToRestState(Goblin));
+                return;
+            }
+            if (!Goblin.ovenToHandle.NeedIngredients(Goblin))
+            {
+                Goblin.ovenToHandle = null;
+                Goblin.TargetOvenInput = null;
+                Goblin.SetState(new WalkingToRestState(Goblin));
+                return;
+            }
+        }
         if (Goblin.GoblinInventory.HasIngredients())
         {
             Goblin.SetState(new DeliverToOven(Goblin));
@@ -52,20 +76,46 @@ public class WalkingToRestState : GoblinState
     public override void UpdateState()
     {
         //priorytet
-        if (Oven.OvensThatNeedIngredients().Count > 0)
+        /*        if (Oven.OvensThatNeedIngredients().Count > 0)
+                {
+                    if (Oven.ovens[0].GoblinWithIngredients != null) return;
+                    Goblin.ovenToHandle = Oven.OvensThatNeedIngredients()[0];
+                    Goblin.TargetOvenInput = Oven.OvensThatNeedIngredients()[0].ovenInput.transform;
+                    Oven.OvensThatNeedIngredients()[0].SetIncomingGoblinWithIngredients(Goblin);
+                    Goblin.SetState(new WalkingToPickUpIngredientsToOven(Goblin));
+                    return;
+                }
+        */
+        if (Goblin.ovenToHandle != null)
         {
-            Goblin.ovenToHandle = Oven.OvensThatNeedIngredients()[0];
-            Goblin.TargetOvenInput = Oven.OvensThatNeedIngredients()[0].ovenInput.transform;
-            Oven.OvensThatNeedIngredients()[0].SetIncomingGoblinWithIngredients(Goblin);
+            if (Goblin.ovenToHandle.GoblinWithIngredients == Goblin)
+            {
+                Goblin.ovenToHandle.SetIncomingGoblinWithIngredients(null);
+            }
+            Goblin.ovenToHandle = null;
+            Goblin.TargetOvenInput = null;
+        }
+        if(Goblin.GoblinInventory.HasIngredients())
+        {
+            Goblin.SetState(new DeliveringIngredientsToPizzeriaState(Goblin));
+            return;
+        }
+        var ovensNeedingIngredients = Oven.OvensThatNeedIngredients();
+        if (ovensNeedingIngredients.Count > 0)
+        {
+            Oven temp = ovensNeedingIngredients[0];
+            if (temp.GoblinWithIngredients != null)
+            {
+                Debug.Log("2 gob same job from WalkingToRest");
+                return;
+            }
+            Goblin.ovenToHandle = temp;
+            Goblin.TargetOvenInput = temp.ovenInput.transform;
+            temp.SetIncomingGoblinWithIngredients(Goblin);
             Goblin.SetState(new WalkingToPickUpIngredientsToOven(Goblin));
             return;
         }
-        /*if (Pizzeria.Instance.PizzasAmmount > 0 && Distribution.Instance.DeliveryGoblins.Count > 0)
-        {
-            Goblin.SetState(new WalkingToPickUpPizzaState(Goblin));
-            return;
-        }*/
-        if(Oven.OvensWithPizzaReady().Count > 0 )
+        if (Oven.OvensWithPizzaReady().Count > 0)
         {
             Goblin.TargetOvenOutput = Oven.OvensWithPizzaReady()[0].ovenOutput.transform;
             Oven.OvensWithPizzaReady()[0].SetIncomingGoblinForPizza(Goblin);
@@ -88,7 +138,7 @@ public class WalkForPizzaToOven : GoblinState
     public WalkForPizzaToOven(GoblinTransporter goblin) : base(goblin) { }
     public override void UpdateState()
     {
-        if(Goblin.GoblinInventory.HasPizza())
+        if (Goblin.GoblinInventory.HasPizza())
         {
             Goblin.SetState(new WalkToDropOffPizzaState(Goblin));
             return;
@@ -104,20 +154,30 @@ public class WaitingState : GoblinState
     public WaitingState(GoblinTransporter goblin) : base(goblin) { }
     public override void UpdateState()
     {
-        if(Oven.OvensThatNeedIngredients().Count>0)
+        if (Goblin.ovenToHandle != null)
         {
-            Goblin.ovenToHandle = Oven.OvensThatNeedIngredients()[0];
-            Goblin.TargetOvenInput = Oven.OvensThatNeedIngredients()[0].transform;
-            Oven.OvensThatNeedIngredients()[0].SetIncomingGoblinWithIngredients(Goblin);
+            if (Goblin.ovenToHandle.GoblinWithIngredients == Goblin)
+            {
+                Goblin.ovenToHandle.SetIncomingGoblinWithIngredients(null);
+            }
+            Goblin.ovenToHandle = null;
+            Goblin.TargetOvenInput = null;
+        }
+        var ovensNeedingIngredients = Oven.OvensThatNeedIngredients();
+        if (ovensNeedingIngredients.Count > 0)
+        {
+            Oven temp = ovensNeedingIngredients[0];
+            if (temp.GoblinWithIngredients != null)
+            {
+                Debug.Log("2 gob same job from Waiting");
+                return;
+            }
+            Goblin.ovenToHandle = temp;
+            Goblin.TargetOvenInput = temp.ovenInput.transform;
+            temp.SetIncomingGoblinWithIngredients(Goblin);
             Goblin.SetState(new WalkingToPickUpIngredientsToOven(Goblin));
             return;
         }
-        /*        if (Pizzeria.Instance.PizzasAmmount > 0 && Distribution.Instance.DeliveryGoblins.Count > 0)
-                {
-                    Goblin.SetState(new WalkingToPickUpPizzaState(Goblin));
-                    return;
-                }
-        */
         if (Oven.OvensWithPizzaReady().Count > 0)
         {
             Goblin.TargetOvenOutput = Oven.OvensWithPizzaReady()[0].ovenOutput.transform;
@@ -195,24 +255,3 @@ public class WalkToDropOffPizzaState : GoblinState
         Goblin.NavMeshAgentGoblin.SetDestination(Distribution.Instance.DistributionInputSpot.position);
     }
 }
-/*public class WalkingToPickUpPizzaState : GoblinState
-{
-    public WalkingToPickUpPizzaState(GoblinTransporter goblin) : base(goblin) { }
-    public override void UpdateState()
-    {
-        if (Goblin.GoblinInventory.HasPizza())
-        {
-            Goblin.SetState(new WalkToDropOffPizzaState(Goblin));
-            return;
-        }
-*//*        if (Pizzeria.Instance.PizzasAmmount <= 0)
-        {
-            Goblin.SetState(new WalkingToRestState(Goblin));
-            return;
-        }
-*//*    }
-    public override void ExecuteBehaviour()
-    {
-        Goblin.NavMeshAgentGoblin.SetDestination(Pizzeria.Instance.PizzeriaOutputSpot.position);
-    }
-}*/

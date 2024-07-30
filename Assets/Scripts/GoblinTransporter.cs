@@ -1,11 +1,14 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.AI;
 
 public class GoblinTransporter : MonoBehaviour
 {
+    public static List<GoblinTransporter> Goblins { get; private set; } = new List<GoblinTransporter>();
+    public static int GoblinCost => Goblins.Count * 10;
     public Transform RestingSpot;
     [SerializeField] private GameObject IngredientsVisual;
     [SerializeField] private GameObject PizzaBox;
@@ -21,6 +24,10 @@ public class GoblinTransporter : MonoBehaviour
     private void Awake()
     {
         GoblinInventory = new(this);
+        if(!Goblins.Contains(this))
+        {
+            Goblins.Add(this);
+        }
     }
     private void Start()
     {
@@ -28,6 +35,7 @@ public class GoblinTransporter : MonoBehaviour
         NavMeshAgentGoblin = GetComponent<NavMeshAgent>();
         SetState(new WalkingToRestState(this));
         UpdateCarryCap();
+        RestingSpot = RestingSpotTrigger.RestingSpot;
     }
 
     private void Update()
@@ -84,6 +92,19 @@ public class GoblinTransporter : MonoBehaviour
     }
     public void ManageTransferToOven()
     {
+        if(ovenToHandle == null)
+        {
+            TargetOvenInput = null;
+            SetState(new WalkingToRestState(this));
+            return;
+        }
+        if(ovenToHandle.GoblinWithIngredients != this)
+        {
+            ovenToHandle = null;
+            TargetOvenInput = null;
+            SetState(new WalkingToRestState(this));
+            return;
+        }
         // Transfer Dough
         if (Pizzeria.Instance.Ingredients.DoughAmount > 0)
         {
@@ -92,9 +113,9 @@ public class GoblinTransporter : MonoBehaviour
             int k = Pizzeria.Instance.Ingredients.DoughAmount;
             int l = ovenToHandle.Baking.BakeAmount;
 
-            int needed = l - j;
-            int doughAmountFreeSpace = Math.Min(i, needed);
-            int finalDoughAmount = Math.Min(k, doughAmountFreeSpace);
+            int neededDough = l - j;
+            int doughAmountFreeSpace = Mathf.Min(i, neededDough);
+            int finalDoughAmount = Mathf.Min(k, doughAmountFreeSpace);
 
             GoblinInventory.PickUpIngredients(finalDoughAmount, 0, 0);
             Pizzeria.Instance.Ingredients.Remove(finalDoughAmount, 0, 0);
@@ -110,8 +131,8 @@ public class GoblinTransporter : MonoBehaviour
             int l = ovenToHandle.Baking.BakeAmount;
 
             int needed = l - j;
-            int sauceAmountFreeSpace = Math.Min(i, needed);
-            int finalSauceAmount = Math.Min(k, sauceAmountFreeSpace);
+            int sauceAmountFreeSpace = Mathf.Min(i, needed);
+            int finalSauceAmount = Mathf.Min(k, sauceAmountFreeSpace);
 
             GoblinInventory.PickUpIngredients(0, finalSauceAmount, 0);
             Pizzeria.Instance.Ingredients.Remove(0, finalSauceAmount, 0);
@@ -127,12 +148,20 @@ public class GoblinTransporter : MonoBehaviour
             int l = ovenToHandle.Baking.BakeAmount;
 
             int needed = l - j;
-            int toppingsAmountFreeSpace = Math.Min(i, needed);
-            int finalToppingsAmount = Math.Min(k, toppingsAmountFreeSpace);
+            int toppingsAmountFreeSpace = Mathf.Min(i, needed);
+            int finalToppingsAmount = Mathf.Min(k, toppingsAmountFreeSpace);
 
             GoblinInventory.PickUpIngredients(0, 0, finalToppingsAmount);
             Pizzeria.Instance.Ingredients.Remove(0, 0, finalToppingsAmount);
             if (GoblinInventory.IsFull()) return;
+        }
+    }
+    public static void BuyGoblinTransporter()
+    {
+        if(Pizzeria.Instance.Money>=GoblinCost)
+        {
+            Pizzeria.Instance.DeductMoney(GoblinCost);
+            Instantiate(Pizzeria.Instance.GoblinTransporterPrefab);
         }
     }
 }
@@ -234,17 +263,17 @@ public class GoblinInventory
     }
     public void PickUpIngredients(int dough, int sauce, int toppings)
     {
-        if (dough + TotalAmount <= HowMuchFreeSpace())
+        if (dough <= HowMuchFreeSpace())
         {
             DoughAmount += dough;
             TotalAmount += dough;
         }
-        if (sauce + TotalAmount <= HowMuchFreeSpace())
+        if (sauce <= HowMuchFreeSpace())
         {
             SauceAmount += sauce;
             TotalAmount += sauce;
         }
-        if (toppings + TotalAmount <= HowMuchFreeSpace())
+        if (toppings <= HowMuchFreeSpace())
         {
             ToppingsAmount += toppings;
             TotalAmount += toppings;
@@ -260,7 +289,7 @@ public class GoblinInventory
     {
         if (pizzas > 0)
         {
-            int pizzasToPickUp = Math.Min(pizzas, HowMuchFreeSpace());
+            int pizzasToPickUp = Mathf.Min(pizzas, HowMuchFreeSpace());
             TotalAmount += pizzasToPickUp;
             PizzasAmount += pizzasToPickUp;
             pizzas -= pizzasToPickUp;

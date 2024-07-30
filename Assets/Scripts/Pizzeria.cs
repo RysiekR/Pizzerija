@@ -3,10 +3,12 @@ using UnityEngine;
 public class Pizzeria : MonoBehaviour
 {
     public static Pizzeria Instance { get; private set; }
+    [SerializeField] public GameObject GoblinTransporterPrefab;
+    [SerializeField] public GameObject OvenPrefab;
     public Transform PizzeriaInputSpot;
-    public Transform PizzeriaOutputSpot;
+    //public Transform PizzeriaOutputSpot;
     public Transform PizzeriaIngredientsShelf;
-    public int Money { get; private set; } = 6;
+    public int Money { get; private set; } = 60;
     //public int PizzasAmmount { get; private set; } = 10;
     public int BasePizzaPrice { get; private set; } = 5;
     public int PizzaPrice { get; private set; } = 0;
@@ -130,4 +132,5 @@ public class Pizzeria : MonoBehaviour
         }
         RecalculatePizzaPrice();
     }
+
 }

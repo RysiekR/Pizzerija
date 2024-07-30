@@ -42,6 +42,12 @@ public class TabMenu : MonoBehaviour
 
     //private Button SellPizzaB;
     private Button BuyDeliveryGoblinsB;
+    private Button BuyGoblinB;
+    private Button BuyOvenB;
+
+    private TextMeshProUGUI BuyOvenT;
+    private TextMeshProUGUI BuyGoblinT;
+
 
     private Button BackToMainMenuB;
     private Button ChangeToShoppingB;
@@ -103,6 +109,16 @@ public class TabMenu : MonoBehaviour
         //SellPizzaB.onClick.AddListener(Pizzeria.Instance.SellPizzaButton);
         BuyDeliveryGoblinsB = MainMenuFirst.transform.Find("BuyDeliveryGoblinB").GetComponent<Button>();
         BuyDeliveryGoblinsB.onClick.AddListener(Distribution.Instance.BuyDeliveryGoblin);
+        BuyOvenB = MainMenuFirst.transform.Find("BuyOvenB").GetComponent<Button>();
+        BuyOvenB.onClick.AddListener(Oven.BuyOven);
+        BuyOvenB.onClick.AddListener(UpdateCost);
+        BuyGoblinB = MainMenuFirst.transform.Find("BuyGoblinB").GetComponent<Button>();
+        BuyGoblinB.onClick.AddListener(GoblinTransporter.BuyGoblinTransporter);
+        BuyGoblinB.onClick.AddListener(UpdateCost);
+
+        BuyGoblinT = MainMenuFirst.transform.Find("BuyGoblinT").GetComponent<TextMeshProUGUI>();
+        BuyOvenT = MainMenuFirst.transform.Find("BuyOvenT").GetComponent<TextMeshProUGUI>();
+
     }
     private void Update()
     {
@@ -112,6 +128,7 @@ public class TabMenu : MonoBehaviour
         RefreshIngridients();
         BuyDeliveryGoblinsB.gameObject.SetActive(Pizzeria.Instance.PizzaPrice > 6);
         AutoDeliveries();
+        UpdateCost();
     }
     private void AutoDeliveries()
     {
@@ -155,6 +172,11 @@ public class TabMenu : MonoBehaviour
 
     }
 
+    public void UpdateCost()
+    {
+        BuyGoblinT.text = $"cost: {GoblinTransporter.GoblinCost}";
+        BuyOvenT.text = $"cost: {Oven.OvenCost}";
+    }
     private void CanvasKeeper()
     {
         MainMenuFirst.gameObject.SetActive(menuTracker == 0);

@@ -196,6 +196,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 202a16b1ffb18924f9bc435bda333abf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  DistributionInputSpot: {fileID: 0}
 --- !u!4 &803641471
 Transform:
   m_ObjectHideFlags: 0
@@ -255,6 +256,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 92b78464602bf0141a03e886434b0512, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  GoblinTransporterPrefab: {fileID: 4765600836576813941, guid: df490be2e8c77654987a6878d49c17f8, type: 3}
+  OvenPrefab: {fileID: 3506286647869676295, guid: ac0b8d6a1637317408c60201b3e50519, type: 3}
+  PizzeriaInputSpot: {fileID: 0}
+  PizzeriaIngredientsShelf: {fileID: 0}
 --- !u!1 &1824636845
 GameObject:
   m_ObjectHideFlags: 0
@@ -344,6 +349,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   DeliveryCarPrefab: {fileID: 5865445101425659066, guid: 8273f40fb9346de4c896c0025e1b6dc2, type: 3}
+  PickUpSpot: {fileID: 0}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

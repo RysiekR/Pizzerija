@@ -16,7 +16,7 @@ public class OvenBaking
         this.oven = oven;
     }
 
-    public IEnumerator Bake()
+    public IEnumerator GetBake()
     {
         if (CanBake())
         {
@@ -33,11 +33,13 @@ public class OvenBaking
             }
             HUDScript.Instance.UpdatePizzasToSell();
             IsBaking = false;
+            oven.coroutine = null;
         }
     }
+
     public bool CanBake()
     {
-        return oven.Ingredients.HasAtLeastOneOfEach();
+        return !IsBaking && oven.Ingredients.HasAtLeastOneOfEach();
     }
 
     public bool HaveEnoughForNextBake()
