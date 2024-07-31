@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
 
@@ -18,6 +19,8 @@ public class Oven : MonoBehaviour
     public Coroutine coroutine = null;
     GameObject ovenVisMatOff;
     GameObject ovenVisMatOn;
+    TextMeshProUGUI OvenDisplayT;
+    GameObject UpgradeTrigger;
     private void Awake()
     {
         if (!ovens.Contains(this))
@@ -28,11 +31,17 @@ public class Oven : MonoBehaviour
         ovenInput.SetOven(this);
         ovenOutput = GetComponentInChildren<OvenOutput>();
         ovenOutput.SetOven(this);
-        Upgrades = new OvenUpgrades(this);
+        Upgrades = new OvenUpgrades(this, transform.Find("UpgradeHUD").GetComponent<Canvas>());
         Baking = new OvenBaking(this);
         Ingredients = new Ingredients();
         ovenVisMatOn = transform.Find("OvenVisualOn").GameObject();
         ovenVisMatOff = transform.Find("OvenVisualOff").GameObject();
+        OvenDisplayT = transform.Find("Canvas").Find("OvenDisplayT").GetComponent<TextMeshProUGUI>();
+        UpgradeTrigger = transform.Find("UpgradeTrigger").GameObject();
+    }
+    private void Start()
+    {
+        UpdateDisplay();
     }
     private void Update()
     {
@@ -41,6 +50,7 @@ public class Oven : MonoBehaviour
 
         ovenVisMatOff.SetActive(!Baking.IsBaking);
         ovenVisMatOn.SetActive(Baking.IsBaking);
+        UpgradeTrigger.SetActive(Upgrades.Upgrades.Count < Upgrades.Level-1);
 
         if (GoblinWithIngredients != null)
         {
@@ -75,12 +85,9 @@ public class Oven : MonoBehaviour
             if (other.GetComponent<GoblinTransporter>().ovenToHandle == this)
             {
                 other.GetComponent<GoblinTransporter>().GoblinInventory.PassIngredients().TransferAllTo(Ingredients);
-                GoblinWithIngredients.TargetOvenInput = null;
-                GoblinWithIngredients.ovenToHandle = null;
-                GoblinWithIngredients = null;
             }
         }
-
+        UpdateDisplay();
     }
     public void TriggerOutput(Collider other)
     {
@@ -95,6 +102,21 @@ public class Oven : MonoBehaviour
                 GoblinForPizza = null;
             }
         }
+        UpdateDisplay();
+    }
+    public void UpdateDisplay()
+    {
+        OvenDisplayT.text = $"Ingredients: {Ingredients.DoughAmount}, {Ingredients.SauceAmount}, {Ingredients.ToppingsAmount}\n" +
+            $"Oven: {OvenONOFF()}\n" +
+            $"Pizzas ready: {PizzasAmount}\n" +
+            $"Lv. {Upgrades.Level}  XP: {Upgrades.Exp}/{Upgrades.LevelThreshold()}";
+    }
+    string OvenONOFF()
+    {
+        if (Baking.IsBaking)
+            return "ON";
+        else
+            return "OFF";
     }
     public void SetIncomingGoblinWithIngredients(GoblinTransporter GoblinTransporter)
     {

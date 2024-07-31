@@ -84,5 +84,6 @@ public enum TodayBonus
     Sauce,
     Toppings,
     SellPrice,
-    Nothing
+    Nothing,
+    NothingButURBeautifull
 }
