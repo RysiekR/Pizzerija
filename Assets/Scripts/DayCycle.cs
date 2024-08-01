@@ -55,13 +55,16 @@ public class DayCycle : MonoBehaviour
     }
     void ChangeTodayBonus()
     {
+
         TodayBonus[] bonuses = (TodayBonus[])Enum.GetValues(typeof(TodayBonus));
         int randIndex = UnityEngine.Random.Range(0, bonuses.Length);
         TodayBonus = bonuses[randIndex];
         DayBonusDebug = TodayBonus;
         if (HUDScript.Instance != null)
             HUDScript.Instance.UpdateTodayBonus();
+        HUDScript.Instance.UpdateTodayBonus();
 
+        //TodayBonus = TodayBonus.NothingButURBeautifull;
     }
     public static bool IsTodayBonusIngredients()
     {

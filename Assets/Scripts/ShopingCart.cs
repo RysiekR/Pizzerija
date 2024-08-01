@@ -16,12 +16,16 @@ public class ShopingCart
     }
     void ModifyCartWithBonus()
     {
+
         if (DayCycle.TodayBonus == TodayBonus.Dough)
-            ShoppingCartIngredients.AddDough(ShoppingCartIngredients.DoughAmount);
+            if (ShoppingCartIngredients.DoughAmount > LazyBuys)
+                ShoppingCartIngredients.AddDough(ShoppingCartIngredients.DoughAmount - LazyBuys);
         if (DayCycle.TodayBonus == TodayBonus.Sauce)
-            ShoppingCartIngredients.AddSauce(ShoppingCartIngredients.SauceAmount);
+            if(ShoppingCartIngredients.SauceAmount > LazyBuys)
+            ShoppingCartIngredients.AddSauce(ShoppingCartIngredients.SauceAmount - LazyBuys);
         if (DayCycle.TodayBonus == TodayBonus.Toppings)
-            ShoppingCartIngredients.AddToppings(ShoppingCartIngredients.ToppingsAmount);
+            if(ShoppingCartIngredients.ToppingsAmount > LazyBuys)
+                ShoppingCartIngredients.AddToppings(ShoppingCartIngredients.ToppingsAmount - LazyBuys);
     }
     public bool CanBuyThisCart()
     {

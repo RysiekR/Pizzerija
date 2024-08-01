@@ -4,7 +4,7 @@ using UnityEngine;
 public class OvenBaking
 {
     Oven oven;
-    public const float BasicBakeTime = 4f;
+    public const float BasicBakeTime = 16f;
     public const int BasicBakeAmount = 1;
     public float BakingTime { get => BasicBakeTime * oven.Upgrades.TimeMultiplier; }
     public int BakeAmount { get => (BasicBakeAmount + oven.Upgrades.AmountAdder) * (int)oven.Upgrades.AmountMultiplier; }

@@ -16,9 +16,10 @@ public class PizzeriaShelf : MonoBehaviour
         {
             return;
         }
-        if (other.GetComponent<GoblinTransporter>().ovenToHandle.GoblinWithIngredients == other.GetComponent<GoblinTransporter>())
+        //if (other.GetComponent<GoblinTransporter>().ovenToHandle.GoblinWithIngredients == other.GetComponent<GoblinTransporter>())
+        if (other.GetComponent<GoblinTransporter>().ovenToHandle.GoblinTransportersWithIngredients.Contains(other.GetComponent<GoblinTransporter>()))
         {
-            other.GetComponent<GoblinTransporter>().ManageTransferToOven();
+            other.GetComponent<GoblinTransporter>().ManageTransferFromShelfToGoblinInventory();
             if(other.GetComponent<GoblinTransporter>().State is not DeliverToOven)
             {
                 other.GetComponent<GoblinTransporter>().SetState(new DeliverToOven(other.GetComponent<GoblinTransporter>()));

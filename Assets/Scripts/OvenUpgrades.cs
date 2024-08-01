@@ -9,7 +9,6 @@ public class OvenUpgrades
     Oven oven;
     public int Exp { get; private set; } = 0;
     public int Level { get; private set; } = 1;
-    //IOvenUpgrade[] upgradesToChoose = new IOvenUpgrade[2];
     List<IOvenUpgrade> upgradesToChoose = new List<IOvenUpgrade>();
     public float TimeMultiplier { get; private set; } = 1f;
     public float AmountMultiplier { get; private set; } = 1f;
@@ -96,10 +95,14 @@ public class OvenUpgrades
     {
         UpgradeHUD.gameObject.SetActive(false);
     }
+    bool keyDown;
     public void ManageUpgradeHUD()
     {
+
         if (UpgradeHUD == null)
         { return; }
+        if (!Input.anyKey)
+            keyDown = false;
 
         if (UpgradesToAdd() > 0)
         {
@@ -109,22 +112,27 @@ public class OvenUpgrades
                 $"{upgradesToChoose[1].Description()}";
 
             IOvenUpgrade chosenUpgrade = null;
-            if (Input.GetKeyDown(KeyCode.Alpha1))
-                if (Pizzeria.Instance.CanPayWithMoney(upgradesToChoose[0].CostOfUpgrade()))
-                chosenUpgrade = upgradesToChoose[0];
-            if (Input.GetKeyDown(KeyCode.Alpha2))
-                if (Pizzeria.Instance.CanPayWithMoney(upgradesToChoose[1].CostOfUpgrade()))
-                    chosenUpgrade = upgradesToChoose[1];
-            if(Input.GetKeyDown(KeyCode.Keypad5))
+            if (!keyDown)
             {
-                GenerateUpgradeToChooseList();
-                return;
+                if (Input.anyKey)
+                    keyDown = true;
+                if (Input.GetKey(KeyCode.Alpha1))
+                    if (Pizzeria.Instance.CanPayWithMoney(upgradesToChoose[0].CostOfUpgrade()))
+                        chosenUpgrade = upgradesToChoose[0];
+                if (Input.GetKey(KeyCode.Alpha2))
+                    if (Pizzeria.Instance.CanPayWithMoney(upgradesToChoose[1].CostOfUpgrade()))
+                        chosenUpgrade = upgradesToChoose[1];
+                if (Input.GetKey(KeyCode.Keypad5))
+                {
+                    GenerateUpgradeToChooseList();
+                    return;
+                }
             }
 
             if (chosenUpgrade != null)
             {
                 GenerateUpgradeToChooseList();
-                AddUpgrade(chosenUpgrade);
+                BuyUpgrade(chosenUpgrade);
                 HideUpgradeHUD();
             }
         }

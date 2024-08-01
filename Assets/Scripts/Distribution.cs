@@ -76,7 +76,7 @@ public class Distribution : MonoBehaviour
     {
         if (Pizzeria.Instance.PizzaPrice > 6)
         {
-            DeliveryGoblin deliveryBoy = new DeliveryGoblin("Debug name",2,5,10);
+            DeliveryGoblin deliveryBoy = new DeliveryGoblin("Debug name",1,5,10);
             if (Pizzeria.Instance.CanPayWithMoney(deliveryBoy.PayPerDay))
             {
                 Instance.DeliveryGoblins.Add(deliveryBoy);

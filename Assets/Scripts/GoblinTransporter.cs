@@ -1,4 +1,3 @@
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
@@ -16,7 +15,7 @@ public class GoblinTransporter : MonoBehaviour
     public Animator Animator;
     public NavMeshAgent NavMeshAgentGoblin;
     public GoblinInventory GoblinInventory;
-    public GoblinState State { get; private set; }
+    [field: SerializeField] public GoblinState State { get; private set; }
     private bool IsChangingState = false;
     public Transform TargetOvenInput;
     public Transform TargetOvenOutput;
@@ -24,7 +23,7 @@ public class GoblinTransporter : MonoBehaviour
     private void Awake()
     {
         GoblinInventory = new(this);
-        if(!Goblins.Contains(this))
+        if (!Goblins.Contains(this))
         {
             Goblins.Add(this);
         }
@@ -61,7 +60,16 @@ public class GoblinTransporter : MonoBehaviour
         }
         CheckIfNotCarrying();
     }
-
+    public void RemoveOvenToHandle(Oven oven)
+    {
+        if (oven != ovenToHandle)
+            Debug.Log("GOBLINTRANSPORTER romoving wrong oven");
+        else
+        {
+            ovenToHandle = null;
+            TargetOvenInput = null;
+        }
+    }
     public void SetState(GoblinState newState)
     {
         if (newState is DeliveringIngredientsToPizzeriaState || newState is WalkToDropOffPizzaState || newState is DeliverToOven)
@@ -90,15 +98,16 @@ public class GoblinTransporter : MonoBehaviour
         }
 
     }
-    public void ManageTransferToOven()
+    public void ManageTransferFromShelfToGoblinInventory()
     {
-        if(ovenToHandle == null)
+        if (ovenToHandle == null)
         {
             TargetOvenInput = null;
             SetState(new WalkingToRestState(this));
             return;
         }
-        if(ovenToHandle.GoblinWithIngredients != this)
+        //if(ovenToHandle.GoblinWithIngredients != this)
+        if (!ovenToHandle.GoblinTransportersWithIngredients.Contains(this))
         {
             ovenToHandle = null;
             TargetOvenInput = null;
@@ -116,9 +125,12 @@ public class GoblinTransporter : MonoBehaviour
             int neededDough = l - j;
             int doughAmountFreeSpace = Mathf.Min(i, neededDough);
             int finalDoughAmount = Mathf.Min(k, doughAmountFreeSpace);
+            if (finalDoughAmount > 0)
+            {
+                GoblinInventory.PickUpIngredients(finalDoughAmount, 0, 0);
+                Pizzeria.Instance.Ingredients.Remove(finalDoughAmount, 0, 0);
+            }
 
-            GoblinInventory.PickUpIngredients(finalDoughAmount, 0, 0);
-            Pizzeria.Instance.Ingredients.Remove(finalDoughAmount, 0, 0);
             if (GoblinInventory.IsFull()) return;
         }
 
@@ -133,9 +145,11 @@ public class GoblinTransporter : MonoBehaviour
             int needed = l - j;
             int sauceAmountFreeSpace = Mathf.Min(i, needed);
             int finalSauceAmount = Mathf.Min(k, sauceAmountFreeSpace);
-
-            GoblinInventory.PickUpIngredients(0, finalSauceAmount, 0);
-            Pizzeria.Instance.Ingredients.Remove(0, finalSauceAmount, 0);
+            if (finalSauceAmount > 0)
+            {
+                GoblinInventory.PickUpIngredients(0, finalSauceAmount, 0);
+                Pizzeria.Instance.Ingredients.Remove(0, finalSauceAmount, 0);
+            }
             if (GoblinInventory.IsFull()) return;
         }
 
@@ -150,15 +164,17 @@ public class GoblinTransporter : MonoBehaviour
             int needed = l - j;
             int toppingsAmountFreeSpace = Mathf.Min(i, needed);
             int finalToppingsAmount = Mathf.Min(k, toppingsAmountFreeSpace);
-
-            GoblinInventory.PickUpIngredients(0, 0, finalToppingsAmount);
-            Pizzeria.Instance.Ingredients.Remove(0, 0, finalToppingsAmount);
+            if (finalToppingsAmount > 0)
+            {
+                GoblinInventory.PickUpIngredients(0, 0, finalToppingsAmount);
+                Pizzeria.Instance.Ingredients.Remove(0, 0, finalToppingsAmount);
+            }
             if (GoblinInventory.IsFull()) return;
         }
     }
     public static void BuyGoblinTransporter()
     {
-        if(Pizzeria.Instance.Money>=GoblinCost)
+        if (Pizzeria.Instance.Money >= GoblinCost)
         {
             Pizzeria.Instance.DeductMoney(GoblinCost);
             Instantiate(Pizzeria.Instance.GoblinTransporterPrefab);
