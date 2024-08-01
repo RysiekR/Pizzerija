@@ -9,11 +9,11 @@ public class RestingSpotTrigger : MonoBehaviour
     {
         RestingSpot = transform;
     }
-    private void OnTriggerEnter(Collider other)
+    /*private void OnTriggerEnter(Collider other)
     {
         if (other.GetComponent<GoblinTransporter>() != null && other.GetComponent<GoblinTransporter>().State is WalkingToRestState)
         {
             other.GetComponent<GoblinTransporter>().SetState(new WaitingState(other.GetComponent<GoblinTransporter>()));
         }
-    }
+    }*/
 }

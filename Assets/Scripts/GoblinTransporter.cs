@@ -20,6 +20,7 @@ public class GoblinTransporter : MonoBehaviour
     public Transform TargetOvenInput;
     public Transform TargetOvenOutput;
     public Oven ovenToHandle;
+    public int[] JobPriority { get; private set; } = { 5, 3, 1 };
     private void Awake()
     {
         GoblinInventory = new(this);
@@ -40,7 +41,12 @@ public class GoblinTransporter : MonoBehaviour
     private void Update()
     {
         Animator.SetBool("IsCarrying", GoblinInventory.HasAnything());
-        Animator.SetBool("IsMoving", State is not WaitingState);
+
+        if (NavMeshAgentGoblin.velocity != Vector3.zero)
+            Animator.SetBool("IsMoving", true);
+        else
+            Animator.SetBool("IsMoving", false);
+
         StateExecution();
     }
     public void UpdateCarryCap()
