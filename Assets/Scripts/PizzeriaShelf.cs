@@ -1,3 +1,4 @@
+using System.Linq;
 using UnityEngine;
 
 public class PizzeriaShelf : MonoBehaviour
@@ -6,30 +7,39 @@ public class PizzeriaShelf : MonoBehaviour
     {
         Pizzeria.Instance.PizzeriaIngredientsShelf = transform;
     }
-    private void OnTriggerEnter(Collider other)
+    private void OnTriggerStay(Collider other)
     {
         if (other.GetComponent<GoblinTransporter>() == null)
         {
             return;
         }
-        if (other.GetComponent<GoblinTransporter>().ovenToHandle == null)
+        GoblinTransporter goblin = other.GetComponent<GoblinTransporter>();
+        if (goblin.ovenToHandle == null)
         {
+            goblin.State.Reset();
+            if (Oven.ovens.Any(o => o.GoblinTransportersWithIngredients.Contains(goblin)))
+                foreach (var o in Oven.ovens)
+                {
+                    if (o.GoblinTransportersWithIngredients.Contains(goblin))
+                    {
+                        o.GoblinTransportersWithIngredients.Remove(goblin);
+                    }
+                }
             return;
         }
-        //if (other.GetComponent<GoblinTransporter>().ovenToHandle.GoblinWithIngredients == other.GetComponent<GoblinTransporter>())
-        if (other.GetComponent<GoblinTransporter>().ovenToHandle.GoblinTransportersWithIngredients.Contains(other.GetComponent<GoblinTransporter>()))
+        if (goblin.ovenToHandle.GoblinTransportersWithIngredients.Contains(goblin))
         {
-            other.GetComponent<GoblinTransporter>().ManageTransferFromShelfToGoblinInventory();
-            if(other.GetComponent<GoblinTransporter>().State is not DeliverToOven)
-            {
-                other.GetComponent<GoblinTransporter>().SetState(new DeliverToOven(other.GetComponent<GoblinTransporter>()));
-            }
+            goblin.ManageTransferFromShelfToGoblinInventory();
+            if (goblin.State is not DeliverToOven)
+                goblin.SetState(new DeliverToOven(goblin));
+            return;
         }
         else
         {
-            other.GetComponent<GoblinTransporter>().ovenToHandle = null;
-            other.GetComponent<GoblinTransporter>().TargetOvenInput = null;
+            goblin.State.Reset();
+            return;
         }
+
     }
     //Debug.Log($"Gob INV: {other.GetComponent<GoblinTransporter>().GoblinInventory.DoughAmount}, {other.GetComponent<GoblinTransporter>().GoblinInventory.SauceAmount}, {other.GetComponent<GoblinTransporter>().GoblinInventory.ToppingsAmount}");
 }

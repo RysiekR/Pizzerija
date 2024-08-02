@@ -4,9 +4,9 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class HutHouse : MonoBehaviour,IHasACost,IHasStaticList
+public class HutHouse : MonoBehaviour, IHasACost, IHasStaticList
 {
-    public static List<HutHouse> HutHouseList {get; private set;} = new List<HutHouse>();
+    public static List<HutHouse> HutHouseList { get; private set; } = new List<HutHouse>();
     public static int HutPrice => HutHouseList.Count * 50;
     public static int MaxGoblinsPerHouse => 5;
     int IHasACost.Cost => HutPrice;
@@ -54,13 +54,9 @@ public class HutHouse : MonoBehaviour,IHasACost,IHasStaticList
                 GoblinTransporter goblinTransporter = GoblinTransporter.Goblins[^1];
                 HutMembers.Add(goblinTransporter);
                 goblinTransporter.RestingSpot = Inside;
-                UpdateAllHutsButtons();
             }
         }
-        else
-        {
-            UpdateButton("Max Members Here!");
-        }
+        UpdateAllHutsButtons();
     }
     void RestingSpot()
     {
@@ -80,10 +76,11 @@ public class HutHouse : MonoBehaviour,IHasACost,IHasStaticList
     }
     void UpdateButton()
     {
+        if (HutMembers.Count >= MaxGoblinsPerHouse)
+        {
+            BuyHutGoblinB.transform.Find("Text (TMP)").GetComponent<TextMeshProUGUI>().text = "Max Members Here!";
+            return;
+        }
         BuyHutGoblinB.transform.Find("Text (TMP)").GetComponent<TextMeshProUGUI>().text = $"Get Another Goblin here.\n(cost: {GoblinTransporter.GoblinCost})";
-    }
-    void UpdateButton(string text)
-    {
-        BuyHutGoblinB.transform.Find("Text (TMP)").GetComponent<TextMeshProUGUI>().text = text;
     }
 }

@@ -272,6 +272,11 @@ public class Oven : MonoBehaviour, IHasACost, IHasStaticList
         ovenInput.SetOven(this);
         ovenOutput = GetComponentInChildren<OvenOutput>();
         ovenOutput.SetOven(this);
-
+    }
+    public void Reset()
+    {
+        ResetTriggers();
+        GoblinForPizza.Clear();
+        GoblinTransportersWithIngredients.Clear();
     }
 }

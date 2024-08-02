@@ -11,6 +11,13 @@ public abstract class GoblinState
     }
     public abstract void UpdateState();
     public abstract void ExecuteBehaviour();
+    public void Reset()
+    {
+        Goblin.ovenToHandle = null;
+        Goblin.TargetOvenInput = null;
+        Goblin.TargetOvenOutput = null;
+        Goblin.SetState(new WalkingToRestState(Goblin));
+    }
 }
 public class DeliverToOven : GoblinState
 {
@@ -47,9 +54,7 @@ public class WalkingToPickUpIngredientsToOven : GoblinState
         {
             if (!Goblin.ovenToHandle.GoblinTransportersWithIngredients.Contains(Goblin))
             {
-                Goblin.ovenToHandle = null;
-                Goblin.TargetOvenInput = null;
-                Goblin.SetState(new WalkingToRestState(Goblin));
+                Reset();
                 return;
             }
             if (!Goblin.ovenToHandle.PizzeriaHasIngredientsForThisOven())
@@ -58,6 +63,11 @@ public class WalkingToPickUpIngredientsToOven : GoblinState
                 Goblin.SetState(new WalkingToRestState(Goblin));
                 return;
             }
+        }
+        if(Goblin.ovenToHandle == null)
+        {
+            Goblin.State.Reset();
+            return;
         }
         if (Goblin.GoblinInventory.HasIngredients())
         {
@@ -104,14 +114,6 @@ public class WalkingToRestState : GoblinState
             }
         }
 
-        /* 
-                if (GoToPickUpIngredientsFromShelf())
-                    return;
-                if (GoToPickUpPizza())
-                    return;
-                if (GoToPickUpIngredientsFromTruck())
-                    return;
-        */
     }
     public override void ExecuteBehaviour()
     {
@@ -175,7 +177,7 @@ public class WalkingToRestState : GoblinState
         {
             if (!Goblin.ovenToHandle.GoblinTransportersWithIngredients.Contains(Goblin))
             {
-                Goblin.RemoveOvenToHandle(Goblin.ovenToHandle);
+                Reset();
             }
             if (!Pizzeria.Instance.Ingredients.HasAny())
             {
@@ -184,7 +186,7 @@ public class WalkingToRestState : GoblinState
         }
         if (!Oven.ovens.Any(o => o.GoblinForPizza.Contains(Goblin)))
         {
-            Goblin.TargetOvenOutput = null;
+            Reset();
         }
         if (Goblin.ovenToHandle == null)
         {

@@ -24,21 +24,17 @@ public class NavMeshRebuilder : MonoBehaviour
     {
         //surface.UpdateNavMesh(surface.navMeshData);
         surface.BuildNavMesh();
-        ResetAll();
+        //ResetAll();
     }
     private void ResetAll()
     {
         foreach(var o in Oven.ovens)
         {
-            o.GoblinForPizza.Clear();
-            o.GoblinTransportersWithIngredients.Clear();
-            o.ResetTriggers();
+            o.Reset();
         }
         foreach(var g in GoblinTransporter.Goblins)
         {
-            g.NavMeshAgentGoblin.Warp(new(0, 0, 0));
-            g.RemoveOvenToHandle(null);
-            g.SetState(new WalkingToRestState(g));
+            g.State.Reset();
         }
     }
 }

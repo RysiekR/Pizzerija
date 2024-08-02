@@ -109,16 +109,12 @@ public class GoblinTransporter : MonoBehaviour
     {
         if (ovenToHandle == null)
         {
-            TargetOvenInput = null;
-            SetState(new WalkingToRestState(this));
+            State.Reset();
             return;
         }
-        //if(ovenToHandle.GoblinWithIngredients != this)
         if (!ovenToHandle.GoblinTransportersWithIngredients.Contains(this))
         {
-            ovenToHandle = null;
-            TargetOvenInput = null;
-            SetState(new WalkingToRestState(this));
+            State.Reset();
             return;
         }
         // Transfer Dough

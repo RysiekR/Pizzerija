@@ -5,11 +5,9 @@ using UnityEngine;
 public class DayCycle : MonoBehaviour
 {
     public const float fullDayLength = 60f;
-    public Day Day { get; private set; } = Day.Unoday;
-    public float DayTime { get; private set; } = 0f;
-    [SerializeField] private Day DebugDay = Day.Unoday;
-    public static TodayBonus TodayBonus { get; private set; }
-    public TodayBonus DayBonusDebug;
+    [field: SerializeField] public Day Day { get; private set; } = Day.Unoday;
+    [field: SerializeField] public float DayTime { get; private set; } = 0f;
+    [field: SerializeField] public static TodayBonus TodayBonus { get; private set; }
     private void Start()
     {
         ChangeTodayBonus();
@@ -51,7 +49,6 @@ public class DayCycle : MonoBehaviour
         if (Day != Day.Quidday) Day++;
         else Day = Day.Unoday;
         ChangeTodayBonus();
-        DebugDay = Day;
     }
     void ChangeTodayBonus()
     {
@@ -59,7 +56,6 @@ public class DayCycle : MonoBehaviour
         TodayBonus[] bonuses = (TodayBonus[])Enum.GetValues(typeof(TodayBonus));
         int randIndex = UnityEngine.Random.Range(0, bonuses.Length);
         TodayBonus = bonuses[randIndex];
-        DayBonusDebug = TodayBonus;
         if (HUDScript.Instance != null)
             HUDScript.Instance.UpdateTodayBonus();
         HUDScript.Instance.UpdateTodayBonus();
@@ -70,6 +66,18 @@ public class DayCycle : MonoBehaviour
     {
         return TodayBonus == TodayBonus.Dough || TodayBonus == TodayBonus.Sauce || TodayBonus == TodayBonus.Toppings;
     }
+    private void ResetAll()
+    {
+        foreach (var o in Oven.ovens)
+        {
+            o.Reset();
+        }
+        foreach (var g in GoblinTransporter.Goblins)
+        {
+            g.State.Reset();
+        }
+    }
+
 }
 
 public enum Day
