@@ -8,7 +8,7 @@ public class Pizzeria : MonoBehaviour
     public Transform PizzeriaInputSpot;
     //public Transform PizzeriaOutputSpot;
     public Transform PizzeriaIngredientsShelf;
-    public int Money { get; private set; } = 10;
+    public int Money { get; private set; } = 1000;
     //public int PizzasAmmount { get; private set; } = 10;
     public int BasePizzaPrice { get; private set; } = 4;
     public int PizzaPrice { get; private set; } = 0;

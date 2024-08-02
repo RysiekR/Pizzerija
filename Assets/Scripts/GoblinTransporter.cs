@@ -20,7 +20,8 @@ public class GoblinTransporter : MonoBehaviour
     public Transform TargetOvenInput;
     public Transform TargetOvenOutput;
     public Oven ovenToHandle;
-    public int[] JobPriority { get; private set; } = { 5, 3, 1 };
+    public int[] JobPriority { get; private set; } = { 4, 5, 1 };//ingrtooven, sellpizza, ingrefromtruck
+    public int OvenPriority { get; private set; } = 2;// start: 0 from oldest, 1 from newest, 2 random
     private void Awake()
     {
         GoblinInventory = new(this);
@@ -68,7 +69,7 @@ public class GoblinTransporter : MonoBehaviour
     }
     public void RemoveOvenToHandle(Oven oven)
     {
-        if (oven != ovenToHandle)
+        if (oven != ovenToHandle && oven !=null)
             Debug.Log("GOBLINTRANSPORTER romoving wrong oven");
         else
         {
@@ -187,24 +188,6 @@ public class GoblinTransporter : MonoBehaviour
         }
     }
 }
-/* {
-     if(Pizzeria.Instance.Ingredients.DoughAmount > 0)
-     {
-         int i = GoblinInventory.HowMuchFreeSpace();
-         int j = ovenToHandle.Ingredients.DoughAmount;
-         int k = Pizzeria.Instance.Ingredients.DoughAmount;
-         int l = ovenToHandle.Baking.BakeAmount;
-
-         int needed = l - j;
-
-         int doughAmountFreeSpace = Math.Min(i, needed);
-         int finalDoughAmount = Math.Min(k, doughAmountFreeSpace);
-
-         GoblinInventory.DoughAmount = finalDoughAmount;
-         Pizzeria.Instance.Ingredients.Remove(finalDoughAmount, 0, 0);
-         if(GoblinInventory.IsFull()) return;
-     }
- }*/
 
 public class GoblinInventory
 {

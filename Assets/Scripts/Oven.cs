@@ -5,10 +5,11 @@ using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
 
-public class Oven : MonoBehaviour
+public class Oven : MonoBehaviour, IHasACost, IHasStaticList
 {
     public static List<Oven> ovens = new List<Oven>();
     public static int OvenCost => ovens.Count * 100;
+    int IHasACost.Cost => OvenCost;
     public OvenInput ovenInput { get; private set; }
     public OvenOutput ovenOutput { get; private set; }
     public int PizzasAmount { get; private set; } = 0;
@@ -27,10 +28,6 @@ public class Oven : MonoBehaviour
     GameObject UpgradeTrigger;
     private void Awake()
     {
-        if (!ovens.Contains(this))
-        {
-            ovens.Add(this);
-        }
         ovenInput = GetComponentInChildren<OvenInput>();
         ovenInput.SetOven(this);
         ovenOutput = GetComponentInChildren<OvenOutput>();
@@ -42,6 +39,14 @@ public class Oven : MonoBehaviour
         ovenVisMatOff = transform.Find("OvenVisualOff").GameObject();
         OvenDisplayT = transform.Find("Canvas").Find("OvenDisplayT").GetComponent<TextMeshProUGUI>();
         UpgradeTrigger = transform.Find("UpgradeTrigger").GameObject();
+    }
+    void IHasStaticList.Initiate()
+    {
+        if (!ovens.Contains(this))
+        {
+            ovens.Add(this);
+        }
+        ResetTriggers();
     }
     private void Start()
     {
@@ -115,7 +120,6 @@ public class Oven : MonoBehaviour
                     other.GetComponent<GoblinTransporter>().GoblinInventory.PickUpPizzaUpToFullInv(PizzasAmount);
                     PizzasAmount -= i;
                     HUDScript.Instance.UpdatePizzasToSell();
-                    //GoblinForPizza = null;
                     GoblinForPizza.Remove(other.GetComponent<GoblinTransporter>());
                 }
             }
@@ -261,5 +265,13 @@ public class Oven : MonoBehaviour
             Instantiate(Pizzeria.Instance.OvenPrefab);
             ovens[ovens.Count - 1].transform.position = new Vector3(25 + 7 * (ovens.Count - 1), 0, 12);
         }
+    }
+    public void ResetTriggers()
+    {
+        ovenInput = GetComponentInChildren<OvenInput>();
+        ovenInput.SetOven(this);
+        ovenOutput = GetComponentInChildren<OvenOutput>();
+        ovenOutput.SetOven(this);
+
     }
 }

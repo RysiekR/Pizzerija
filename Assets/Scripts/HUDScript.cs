@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Linq;
 using TMPro;
 using UnityEngine;
@@ -12,6 +11,12 @@ public class HUDScript : MonoBehaviour
     TextMeshProUGUI noIngredients;
     TextMeshProUGUI ETANextCarT;
     TextMeshProUGUI TodayBonusT;
+
+
+    TextMeshProUGUI BuildModeT;
+    Canvas BuildModeC;
+    TextMeshProUGUI HutHouseT;
+    TextMeshProUGUI HutOvenT;
     private void Awake()
     {
         if (Instance != null && Instance != this)
@@ -23,7 +28,7 @@ public class HUDScript : MonoBehaviour
             Instance = this;
             DontDestroyOnLoad(gameObject);
         }
-        TodayBonusT = transform.Find("TodayBonusT").GetComponent <TextMeshProUGUI>();
+        TodayBonusT = transform.Find("TodayBonusT").GetComponent<TextMeshProUGUI>();
     }
 
     private void Start()
@@ -33,6 +38,11 @@ public class HUDScript : MonoBehaviour
         goblinsWaiting = transform.Find("GoblinsAreWaitingTMPT").GetComponent<TextMeshProUGUI>();
         noIngredients = transform.Find("PizzerijaIngrTMPT").GetComponent<TextMeshProUGUI>();
         ETANextCarT = transform.Find("ETANextCarT").GetComponent<TextMeshProUGUI>();
+
+        BuildModeT = transform.Find("BuildModeT").GetComponent<TextMeshProUGUI>();
+        BuildModeC = transform.Find("BuildModeC").GetComponent<Canvas>();
+        HutHouseT = BuildModeC.transform.Find("HutHouseI").Find("Text").GetComponent<TextMeshProUGUI>();
+        HutOvenT = BuildModeC.transform.Find("HutOvenI").Find("Text").GetComponent<TextMeshProUGUI>();
     }
 
     void Update()
@@ -95,5 +105,16 @@ public class HUDScript : MonoBehaviour
     void UpdateNoIngredients()
     {
         noIngredients.transform.gameObject.SetActive(!Pizzeria.Instance.CanBake());
+    }
+
+    public void UpdateBuildMode(bool showBuildMenu)
+    {
+        BuildModeC.gameObject.SetActive(showBuildMenu);
+        if (showBuildMenu)
+        {
+            HutHouseT.text = $"Build:\nHouse- can store {HutHouse.MaxGoblinsPerHouse} goblins\ncost: {HutHouse.HutPrice}";
+            HutOvenT.text = $"Build:\nOven - Bake pizza\ncost: {Oven.OvenCost}";
+        }
+        BuildModeT.gameObject.SetActive(BuildMode.IsInBuildMode);
     }
 }
