@@ -49,6 +49,11 @@ public class BuildMode : MonoBehaviour
         {
             //logic what to do when in build mode, rotate, move, or initiate some methods
             //egzample: GetComponent<Oven>().OnBuild()
+            Vector3 spawnPosition = transform.position + transform.forward * 5;
+            Quaternion spawnRotation = transform.rotation;
+            previewCube.transform.position = spawnPosition;
+            previewCube.transform.rotation = spawnRotation;
+
 
             int moneyToPay = 0;
             IHasACost costComponent = previewCube.GetComponent<IHasACost>();
@@ -87,8 +92,7 @@ public class BuildMode : MonoBehaviour
         if (HutHousePrefab != null)
         {
             // Calculate position in front of the camera
-            Vector3 spawnPosition = transform.position;
-            spawnPosition += transform.forward * 5;
+            Vector3 spawnPosition = transform.position + transform.forward * 5;
             Quaternion spawnRotation = transform.rotation;
             //spawnRotation *= Quaternion.Euler(0, 180, 0);
             // Instantiate the HutHouse or a cube for preview

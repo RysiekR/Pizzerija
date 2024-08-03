@@ -17,8 +17,6 @@ public class HutHouse : MonoBehaviour, IHasACost, IHasStaticList
     private void Awake()
     {
         Inside = transform;
-        BuyHutGoblinB = transform.Find("Canvas").Find("BuyHutGoblinB").GetComponent<Button>();
-        BuyHutGoblinB.onClick.AddListener(SpawnGoblin);
     }
     void IHasStaticList.Initiate()
     {
@@ -26,10 +24,15 @@ public class HutHouse : MonoBehaviour, IHasACost, IHasStaticList
         {
             HutHouseList.Add(this);
         }
+        BuyHutGoblinB = transform.Find("Canvas").Find("BuyHutGoblinB").GetComponent<Button>();
+        Navigation navigation = BuyHutGoblinB.navigation;
+        navigation.mode = Navigation.Mode.None;
+        BuyHutGoblinB.navigation = navigation;
+        BuyHutGoblinB.onClick.AddListener(SpawnGoblin);
+        UpdateButton();
     }
     private void Start()
     {
-        UpdateButton();
     }
     private void Update()
     {
