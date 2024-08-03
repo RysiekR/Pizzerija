@@ -43,7 +43,7 @@ public class PlayerMovementController : MonoBehaviour
     {
         bool leftRotation = false;
         bool rightRotation = false;
-        float rotationSpeed = 50f;
+        float rotationSpeed = Input.GetKey(KeyCode.LeftShift) ? 150f : 50f;
 
         if (Input.GetKey(KeyCode.Q)) leftRotation = true;
         if (Input.GetKey(KeyCode.E)) rightRotation = true;
@@ -64,7 +64,8 @@ public class PlayerMovementController : MonoBehaviour
     private void PlayerVisualRotation(Vector3 movementDirection)
     {
         //float stepSpeed = currentSpeed * 5 * Time.deltaTime;
-        float stepSpeed = currentSpeed * 15 * Time.deltaTime;
+        float multiplayer = Input.GetKey(KeyCode.LeftShift) ? 30 : 40; // first in sprint(smaller bcs of regular movement speed)
+        float stepSpeed = currentSpeed * multiplayer * Time.deltaTime;
         Quaternion targetRotation = Quaternion.LookRotation(movementDirection);
         PlayerVisual.transform.rotation = Quaternion.RotateTowards(PlayerVisual.transform.rotation, targetRotation, stepSpeed);
     }
