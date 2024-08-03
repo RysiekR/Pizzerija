@@ -11,7 +11,7 @@ public class NavMeshRebuilder : MonoBehaviour
         if (Instance != null && Instance != this)
             Destroy(gameObject);
         else
-        { 
+        {
             Instance = this;
             DontDestroyOnLoad(gameObject);
         }
@@ -22,17 +22,37 @@ public class NavMeshRebuilder : MonoBehaviour
     }
     public void ResetNavMeshSurface()
     {
-        //surface.UpdateNavMesh(surface.navMeshData);
-        surface.BuildNavMesh();
+        StartCoroutine(StartUpdatingNavMesh());
+        //surface.BuildNavMesh();
         //ResetAll();
     }
+    private IEnumerator StartUpdatingNavMesh()
+    {
+        yield return StartCoroutine(UpdateNavMeshAsync());
+    }
+    private IEnumerator UpdateNavMeshAsync()
+    {
+        AsyncOperation asyncOp = surface.UpdateNavMesh(surface.navMeshData);
+
+        while (!asyncOp.isDone)
+        {
+            // You can check progress here if needed
+            float progress = asyncOp.progress;
+            Debug.Log($"NavMesh update progress: {progress * 100}%");
+
+            yield return null;
+        }
+
+        Debug.Log("NavMesh update completed");
+    }
+
     private void ResetAll()
     {
-        foreach(var o in Oven.ovens)
+        foreach (var o in Oven.ovens)
         {
             o.Reset();
         }
-        foreach(var g in GoblinTransporter.Goblins)
+        foreach (var g in GoblinTransporter.Goblins)
         {
             g.State.Reset();
         }

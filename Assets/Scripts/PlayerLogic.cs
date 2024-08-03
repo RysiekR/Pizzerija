@@ -17,7 +17,6 @@ public class PlayerLogic : MonoBehaviour
     {
         IngredientsVisual.SetActive(IngredientsOnPlayer.HasAny());
         PizzaBoxxesVisual.SetActive(PizzasAmount > 0);
-
     }
 
     public void GrabIngredients(Ingredients ingredientsToGrab)

@@ -12,7 +12,7 @@ public class BuildMode : MonoBehaviour
 
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.B) && !prefabDrawn)
+        if (Input.GetKeyDown(KeyCode.C) && !prefabDrawn)
         {
 
             IsInBuildMode = !IsInBuildMode;

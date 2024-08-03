@@ -13,7 +13,6 @@ public class PlayerMovementController : MonoBehaviour
     {
         Movement();
         CameraRotation();
-
     }
     /// <summary>
     /// Movement on XZ axis with Y dropforce (with Input.GetAxis)
