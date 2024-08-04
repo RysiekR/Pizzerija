@@ -1,5 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
+using System.Xml.Schema;
 using TMPro;
 using UnityEngine;
 using UnityEngine.AI;
@@ -37,6 +39,7 @@ public class GoblinTransporter : MonoBehaviour
         SetState(new WalkingToRestState(this));
         UpdateCarryCap();
         RestingSpot = RestingSpotTrigger.RestingSpot;
+        ResetRestSpot();
     }
 
     private void Update()
@@ -66,6 +69,25 @@ public class GoblinTransporter : MonoBehaviour
             State.ExecuteBehaviour();
         }
         CheckIfNotCarrying();
+    }
+    public void ResetRestSpot()
+    {
+        if (HutHouse.HutHouseList.Any(h => h.HutMembers.Contains(this)))
+        {
+            foreach (var h in HutHouse.HutHouseList)
+            {
+                foreach (var g in h.HutMembers)
+                {
+                    if (g == this)
+                    {
+                        RestingSpot = h.Inside;
+                        return;
+                    }
+                }
+            }
+        }
+        Debug.Log("Goblin didnt found home");
+
     }
     public void RemoveOvenToHandle(Oven oven)
     {
