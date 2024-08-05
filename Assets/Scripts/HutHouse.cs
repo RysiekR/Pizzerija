@@ -85,6 +85,8 @@ public class HutHouse : MonoBehaviour, IHasACost, IHasStaticList
         }
         UpdateAllHutsButtons();
         RestingSpot();
+        GetComponentInChildren<HutHousePrio>().RefreshPrioText();
+        GetComponentInChildren<HutHousePrio>().RefreshOvenPrioText();
     }
     void RestingSpot()
     {
@@ -133,5 +135,14 @@ public class HutHouse : MonoBehaviour, IHasACost, IHasStaticList
             Vis2.SetActive(true);
         }
 
+    }
+    public void ChangeOvenPrio(int prio)
+    {
+        if (HutMembers.Count <= 0)
+            return;
+        foreach (var g in HutMembers)
+        {
+            g.State.ChangeOvenPrio(prio);
+        }
     }
 }

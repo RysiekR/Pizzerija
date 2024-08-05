@@ -1,15 +1,12 @@
 using System.Linq;
-using Unity.VisualScripting;
 using UnityEngine;
 
-[System.Serializable]
 public abstract class GoblinState
 {
     protected GoblinTransporter Goblin;
-    public int[] JobPriority { get; private set; } = { 4, 5, 1 };//ingrtooven, sellpizza, ingrefromtruck
-    public int OvenPriority { get; private set; } = 2;// start: 0 from oldest, 1 from newest, 2 random
     protected GoblinState(GoblinTransporter goblin)
     {
+
         Goblin = goblin;
     }
     protected abstract void UpdateStateSpecific();
@@ -23,14 +20,7 @@ public abstract class GoblinState
     }
     private void ChangeJobPriority(int jobIndex, int plusMinus)
     {
-        for (int i = 0; i < JobPriority.Length; i++)
-        {
-            if (jobIndex == i)
-            {
-                JobPriority[i] += plusMinus;
-                JobPriority[i] = Mathf.Clamp(JobPriority[i], 1, 5);
-            }
-        }
+        Goblin.JobPriority[jobIndex] = Mathf.Clamp(Goblin.JobPriority[jobIndex] + plusMinus, 1, 5);
     }
 
     public void UpPrio(int jobIndex)
@@ -40,6 +30,19 @@ public abstract class GoblinState
     public void DownPrio(int jobIndex)
     {
         ChangeJobPriority(jobIndex, -1);
+    }
+    /// <summary>
+    /// 0 - oldest, 1 - newest, 2 - random
+    /// </summary>
+    public void ChangeOvenPrio(int prio)
+    {
+        switch (prio)
+        {
+            case 0: Goblin.OvenPriority = 0; break;
+            case 1: Goblin.OvenPriority = 1; break;
+            case 2: Goblin.OvenPriority = 2; break;
+            default: Goblin.OvenPriority = 1; break;
+        }
     }
     public void UpdateState()
     {
@@ -129,9 +132,9 @@ public class WalkingToRestState : GoblinState
         //priorytet
         for (int i = 5; i > 0; i--)
         {
-            for (int j = 0; j < JobPriority.Length; j++)
+            for (int j = 0; j < Goblin.JobPriority.Length; j++)
             {
-                if (JobPriority[j] == i)
+                if (Goblin.JobPriority[j] == i)
                 {
                     switch (j)
                     {
@@ -192,7 +195,7 @@ public class WalkingToRestState : GoblinState
         var ovensNeedingIngredients = Oven.OvensThatNeedIngredients();
         if (ovensNeedingIngredients.Count > 0)
         {
-            switch (OvenPriority)
+            switch (Goblin.OvenPriority)
             {
                 case 0: index = 0; break;
                 case 1: index = ovensNeedingIngredients.Count - 1; break;

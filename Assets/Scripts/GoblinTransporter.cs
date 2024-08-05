@@ -10,15 +10,21 @@ public class GoblinTransporter : MonoBehaviour
 {
     public static List<GoblinTransporter> Goblins { get; private set; } = new List<GoblinTransporter>();
     public static int GoblinCost => Goblins.Count * 10;
-    public Transform RestingSpot;
-    [SerializeField] private GameObject IngredientsVisual;
-    [SerializeField] private GameObject PizzaBox;
+    
+    public GoblinInventory GoblinInventory;
     private TextMeshProUGUI MaxCarryT;
     public Animator Animator;
     public NavMeshAgent NavMeshAgentGoblin;
-    public GoblinInventory GoblinInventory;
+
     public GoblinState State { get; private set; }
+    public int[] JobPriority { get; private set; } = { 4, 5, 1 };//ingrtooven, sellpizza, ingrefromtruck
+    public int OvenPriority { get; set; } = 2;// start: 0 from oldest, 1 from newest, 2 random
     private bool IsChangingState = false;
+
+    [SerializeField] private GameObject IngredientsVisual;
+    [SerializeField] private GameObject PizzaBox;
+
+    public Transform RestingSpot;
     public Transform TargetOvenInput;
     public Transform TargetOvenOutput;
     public Oven ovenToHandle;
@@ -29,12 +35,12 @@ public class GoblinTransporter : MonoBehaviour
         {
             Goblins.Add(this);
         }
+        SetState(new WalkingToRestState(this));
     }
     private void Start()
     {
         MaxCarryT = transform.Find("Canvas").Find("MaxCarryT").GetComponent<TextMeshProUGUI>();
         NavMeshAgentGoblin = GetComponent<NavMeshAgent>();
-        SetState(new WalkingToRestState(this));
         UpdateCarryCap();
         RestingSpot = RestingSpotTrigger.RestingSpot;
         ResetRestSpot();
