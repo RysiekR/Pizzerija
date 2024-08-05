@@ -74,7 +74,7 @@ public class BuildMode : MonoBehaviour
                 HUDScript.Instance.UpdateBuildMode(false);
                 NavMeshRebuilder.Instance.ResetNavMeshSurface();
             }
-            if (IsInBuildMode && Input.GetKeyDown(KeyCode.Escape))
+            if (IsInBuildMode && Input.GetKeyDown(KeyCode.X)) // x for exit
             {
                 // Exiting build mode: destroy the preview cube
                 Destroy(previewCube);

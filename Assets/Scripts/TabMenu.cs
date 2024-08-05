@@ -9,7 +9,7 @@ public class TabMenu : MonoBehaviour
     [SerializeField] private TextMeshProUGUI PizzasSoldUGUI;
     [SerializeField] private TextMeshProUGUI PizzaPriceUGUI;
 
-    private int menuTracker = 0;
+    private int menuTracker = 2;
 
     private Button DoughPB;
     private Button DoughMB;
@@ -51,9 +51,13 @@ public class TabMenu : MonoBehaviour
 
     private Button BackToMainMenuB;
     private Button ChangeToShoppingB;
+    private Button ChangeToHelpB;
 
     private Canvas MainMenuFirst;
     private Canvas ShoppingCart;
+
+    private Canvas Help;
+    private Button BackToMainMenu2B;
     private void Start()
     {
         MainMenuFirst = transform.Find("MainMenuFirst").GetComponent<Canvas>();
@@ -104,6 +108,8 @@ public class TabMenu : MonoBehaviour
         BackToMainMenuB.onClick.AddListener(() => { menuTracker = 0; });
         ChangeToShoppingB = MainMenuFirst.transform.Find("ChangeToShoppingB").GetComponent<Button>();
         ChangeToShoppingB.onClick.AddListener(() => { menuTracker = 1; });
+        ChangeToHelpB = MainMenuFirst.transform.Find("ChangeToHelpB").GetComponent<Button>();
+        ChangeToHelpB.onClick.AddListener(() => { menuTracker = 2; });
 
         //SellPizzaB = MainMenuFirst.transform.Find("SellPizzaB").GetComponent<Button>();
         //SellPizzaB.onClick.AddListener(Pizzeria.Instance.SellPizzaButton);
@@ -118,6 +124,11 @@ public class TabMenu : MonoBehaviour
 
         BuyGoblinT = MainMenuFirst.transform.Find("BuyGoblinT").GetComponent<TextMeshProUGUI>();
         BuyOvenT = MainMenuFirst.transform.Find("BuyOvenT").GetComponent<TextMeshProUGUI>();
+
+
+        Help = transform.Find("Help").GetComponent<Canvas>();
+        BackToMainMenu2B = Help.transform.Find("BackToMainMenu2B").GetComponent<Button>();
+        BackToMainMenu2B.onClick.AddListener(() => { menuTracker = 0; });
 
     }
     private void Update()
@@ -181,5 +192,6 @@ public class TabMenu : MonoBehaviour
     {
         MainMenuFirst.gameObject.SetActive(menuTracker == 0);
         ShoppingCart.gameObject.SetActive(menuTracker == 1);
+        Help.gameObject.SetActive(menuTracker == 2);
     }
 }

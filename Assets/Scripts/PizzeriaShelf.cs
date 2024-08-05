@@ -29,7 +29,7 @@ public class PizzeriaShelf : MonoBehaviour
         }
         if (goblin.ovenToHandle.GoblinTransportersWithIngredients.Contains(goblin))
         {
-            goblin.ManageTransferFromShelfToGoblinInventory();
+            goblin.GoblinInventory.ManageTransferFromShelfToGoblinInventory();
             if (goblin.State is not DeliverToOven)
                 goblin.SetState(new DeliverToOven(goblin));
             return;
