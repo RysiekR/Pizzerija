@@ -22,7 +22,7 @@ public class OvenBaking
         {
             IsBaking = true;
             TransferIngredientsToBake();
-            oven.UpdateDisplay();
+            oven.OvenVisuals.UpdateDisplay();
             yield return new WaitForSeconds(BakingTime);
             for (int i = 0; i < BakeAmount; i++)
             {
@@ -36,7 +36,7 @@ public class OvenBaking
             HUDScript.Instance.UpdatePizzasToSell();
             IsBaking = false;
             oven.coroutine = null;
-            oven.UpdateDisplay();
+            oven.OvenVisuals.UpdateDisplay();
         }
     }
 

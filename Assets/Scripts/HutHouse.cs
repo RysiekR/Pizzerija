@@ -144,5 +144,6 @@ public class HutHouse : MonoBehaviour, IHasACost, IHasStaticList
         {
             g.State.ChangeOvenPrio(prio);
         }
+
     }
 }

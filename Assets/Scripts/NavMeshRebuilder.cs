@@ -50,7 +50,7 @@ public class NavMeshRebuilder : MonoBehaviour
     {
         foreach (var o in Oven.ovens)
         {
-            o.Reset();
+            o.ResetOven();
         }
         foreach (var g in GoblinTransporter.Goblins)
         {

@@ -41,6 +41,7 @@ public class DayCycle : MonoBehaviour
         {
             DayTime = 0f;
             NextDay();
+            NavMeshRebuilder.Instance.ResetNavMeshSurface();
         }
     }
 
@@ -70,7 +71,7 @@ public class DayCycle : MonoBehaviour
     {
         foreach (var o in Oven.ovens)
         {
-            o.Reset();
+            o.ResetOven();
         }
         foreach (var g in GoblinTransporter.Goblins)
         {

@@ -43,6 +43,10 @@ public abstract class GoblinState
             case 2: Goblin.OvenPriority = 2; break;
             default: Goblin.OvenPriority = 1; break;
         }
+        if (Goblin.ovenToHandle != null) {
+            Goblin.ovenToHandle.OvenGoblinManager.RemoveIncomingGoblinWithIngredientsFromList(Goblin);
+        }
+        Reset();
     }
     public void UpdateState()
     {
@@ -69,7 +73,7 @@ public class DeliverToOven : GoblinState
         {
             if (Goblin.ovenToHandle != null)
             {
-                Goblin.ovenToHandle.RemoveIncomingGoblinWithIngredientsFromList(Goblin);
+                Goblin.ovenToHandle.OvenGoblinManager.RemoveIncomingGoblinWithIngredientsFromList(Goblin);
             }
             Goblin.SetState(new WalkingToRestState(Goblin));
             return;
@@ -77,6 +81,11 @@ public class DeliverToOven : GoblinState
         if (Goblin.ovenToHandle == null)
         {
             Goblin.SetState(new WalkingToRestState(Goblin));
+            return;
+        }
+        if (!Goblin.ovenToHandle.OvenGoblinManager.GoblinTransportersWithIngredients.Contains(Goblin))
+        {
+            Reset();
             return;
         }
     }
@@ -93,14 +102,14 @@ public class WalkingToPickUpIngredientsToOven : GoblinState
     {
         if (Goblin.ovenToHandle != null)
         {
-            if (!Goblin.ovenToHandle.GoblinTransportersWithIngredients.Contains(Goblin))
+            if (!Goblin.ovenToHandle.OvenGoblinManager.GoblinTransportersWithIngredients.Contains(Goblin))
             {
                 Reset();
                 return;
             }
-            if (!Goblin.ovenToHandle.PizzeriaHasIngredientsForThisOven())
+            if (!Goblin.ovenToHandle.OvenIngredientsManager.PizzeriaHasIngredientsForThisOven())
             {
-                Goblin.ovenToHandle.RemoveIncomingGoblinWithIngredientsFromList(Goblin);
+                Goblin.ovenToHandle.OvenGoblinManager.RemoveIncomingGoblinWithIngredientsFromList(Goblin);
                 Goblin.SetState(new WalkingToRestState(Goblin));
                 return;
             }
@@ -182,7 +191,7 @@ public class WalkingToRestState : GoblinState
         if (ovensWithPizza.Count > 0)
         {
             Goblin.TargetOvenOutput = ovensWithPizza[0].ovenOutput.transform;
-            ovensWithPizza[0].AddIncomingGoblinForPizza(Goblin);
+            ovensWithPizza[0].OvenGoblinManager.AddIncomingGoblinForPizza(Goblin);
             Goblin.SetState(new WalkForPizzaToOven(Goblin));
             return true;
         }
@@ -200,11 +209,12 @@ public class WalkingToRestState : GoblinState
                 case 0: index = 0; break;
                 case 1: index = ovensNeedingIngredients.Count - 1; break;
                 case 2: index = Random.Range(0, ovensNeedingIngredients.Count); break;
+                default: index = 0; break;
             }
-            Oven temp = ovensNeedingIngredients[0];
+            Oven temp = ovensNeedingIngredients[index];
             Goblin.ovenToHandle = temp;
             Goblin.TargetOvenInput = temp.ovenInput.transform;
-            temp.SetIncomingGoblinWithIngredients(Goblin);
+            temp.OvenGoblinManager.SetIncomingGoblinWithIngredients(Goblin);
             Goblin.SetState(new WalkingToPickUpIngredientsToOven(Goblin));
             return true;
         }
@@ -216,26 +226,26 @@ public class WalkingToRestState : GoblinState
         //remaining targets
         if (Goblin.ovenToHandle != null)
         {
-            if (!Goblin.ovenToHandle.GoblinTransportersWithIngredients.Contains(Goblin))
+            if (!Goblin.ovenToHandle.OvenGoblinManager.GoblinTransportersWithIngredients.Contains(Goblin))
             {
                 Reset();
             }
             if (!Pizzeria.Instance.Ingredients.HasAny())
             {
-                Goblin.ovenToHandle.RemoveIncomingGoblinWithIngredientsFromList(Goblin);
+                Goblin.ovenToHandle.OvenGoblinManager.RemoveIncomingGoblinWithIngredientsFromList(Goblin);
             }
         }
-        if (!Oven.ovens.Any(o => o.GoblinForPizza.Contains(Goblin)))
+        if (!Oven.ovens.Any(o => o.OvenGoblinManager.GoblinForPizza.Contains(Goblin)))
         {
             Reset();
         }
         if (Goblin.ovenToHandle == null)
         {
-            if (Oven.ovens.Any(o => o.GoblinTransportersWithIngredients.Contains(Goblin)))
+            if (Oven.ovens.Any(o => o.OvenGoblinManager.GoblinTransportersWithIngredients.Contains(Goblin)))
                 foreach (var o in Oven.ovens)
                 {
-                    if (o.GoblinTransportersWithIngredients.Contains(Goblin))
-                        o.GoblinTransportersWithIngredients.Remove(Goblin);
+                    if (o.OvenGoblinManager.GoblinTransportersWithIngredients.Contains(Goblin))
+                        o.OvenGoblinManager.GoblinTransportersWithIngredients.Remove(Goblin);
                 }
         }
 

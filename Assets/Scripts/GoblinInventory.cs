@@ -185,7 +185,7 @@ public class GoblinInventory
             owner.State.Reset();
             return;
         }
-        if (!owner.ovenToHandle.GoblinTransportersWithIngredients.Contains(owner))
+        if (!owner.ovenToHandle.OvenGoblinManager.GoblinTransportersWithIngredients.Contains(owner))
         {
             owner.State.Reset();
             return;

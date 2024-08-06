@@ -12,6 +12,15 @@ public class OvenInput : MonoBehaviour
     }
     private void OnTriggerEnter(Collider other)
     {
-        oven.TriggerInput(other);
+        if (other.GetComponent<GoblinTransporter>() != null)
+        {
+            GoblinTransporter goblin = other.GetComponent<GoblinTransporter>();
+            if (goblin.ovenToHandle == oven)
+            {
+                oven.OvenGoblinManager.RemoveIncomingGoblinWithIngredientsFromList(goblin);
+                goblin.GoblinInventory.PassIngredients().TransferAllTo(oven.Ingredients);
+            }
+        }
+        oven.OvenVisuals.UpdateDisplay();
     }
 }

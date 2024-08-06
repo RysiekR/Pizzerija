@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using TMPro;
@@ -16,18 +15,19 @@ public class Oven : MonoBehaviour, IHasACost, IHasStaticList
     public OvenUpgrades Upgrades { get; private set; }
     public OvenBaking Baking { get; private set; }
     public Ingredients Ingredients { get; private set; }
-    //public GoblinTransporter GoblinWithIngredients { get; private set; } = null;
-    public List<GoblinTransporter> GoblinTransportersWithIngredients { get; private set; } = new List<GoblinTransporter>();
-    public int AmountOfGoblinHelpers => ((int)Upgrades.Level / 2) + 1;
-    //public GoblinTransporter GoblinForPizza { get; private set; } = null;
-    public List<GoblinTransporter> GoblinForPizza { get; private set; } = new List<GoblinTransporter>();
+
+    public OvenGoblinManager OvenGoblinManager { get; private set; }
+    public OvenIngredientsManager OvenIngredientsManager { get; private set; }
+
     public Coroutine coroutine = null;
-    GameObject ovenVisMatOff;
-    GameObject ovenVisMatOn;
-    TextMeshProUGUI OvenDisplayT;
-    GameObject UpgradeTrigger;
+
+    public OvenVisuals OvenVisuals;
+
     private void Awake()
     {
+        OvenVisuals = new(this);
+        OvenGoblinManager = new(this);
+        OvenIngredientsManager = new(this);
         ovenInput = GetComponentInChildren<OvenInput>();
         ovenInput.SetOven(this);
         ovenOutput = GetComponentInChildren<OvenOutput>();
@@ -35,10 +35,11 @@ public class Oven : MonoBehaviour, IHasACost, IHasStaticList
         Upgrades = new OvenUpgrades(this, transform.Find("UpgradeHUD").GetComponent<Canvas>());
         Baking = new OvenBaking(this);
         Ingredients = new Ingredients();
-        ovenVisMatOn = transform.Find("OvenVisualOn").GameObject();
-        ovenVisMatOff = transform.Find("OvenVisualOff").GameObject();
-        OvenDisplayT = transform.Find("Canvas").Find("OvenDisplayT").GetComponent<TextMeshProUGUI>();
-        UpgradeTrigger = transform.Find("UpgradeTrigger").GameObject();
+
+        OvenVisuals.SetMatOFF(transform.Find("OvenVisualOff").GameObject());
+        OvenVisuals.SetMatON(transform.Find("OvenVisualOn").GameObject());
+        OvenVisuals.SetDisplayT(transform.Find("Canvas").Find("OvenDisplayT").GetComponent<TextMeshProUGUI>());
+        OvenVisuals.SetUpgradeTrigger(transform.Find("UpgradeTrigger").GameObject());
     }
     void IHasStaticList.Initiate()
     {
@@ -50,36 +51,17 @@ public class Oven : MonoBehaviour, IHasACost, IHasStaticList
     }
     private void Start()
     {
-        UpdateDisplay();
+        OvenVisuals.UpdateDisplay();
     }
     private void Update()
     {
         if (!Baking.IsBaking && Ingredients.HasAtLeastOneOfEach() && coroutine == null)
             coroutine = StartCoroutine(Baking.GetBake());
 
-        ovenVisMatOff.SetActive(!Baking.IsBaking);
-        ovenVisMatOn.SetActive(Baking.IsBaking);
-        UpgradeTrigger.SetActive(Upgrades.Upgrades.Count < Upgrades.Level - 1);
+        OvenVisuals.UpdateVis();
 
-        if (GoblinTransportersWithIngredients.Count >= AmountOfGoblinHelpers)
-        {
-            if (GoblinTransportersWithIngredients.Any(g => g.ovenToHandle != this))
-            {
-                Debug.Log("NotRemovingCorrectly");
-                List<GoblinTransporter> toRemove = new List<GoblinTransporter>();
-                foreach (GoblinTransporter t in GoblinTransportersWithIngredients)
-                {
-                    if (t.ovenToHandle != this)
-                    {
-                        toRemove.Add(t);
-                    }
-                }
-                foreach (GoblinTransporter t in toRemove)
-                {
-                    GoblinTransportersWithIngredients.Remove(t);
-                }
-            }
-        }
+        OvenGoblinManager.UpdateLogic();
+
         //Debug.Log(Ingredients.DoughAmount + ", " + Ingredients.SauceAmount + ", " + Ingredients.ToppingsAmount);
         //Debug.Log($"Pizzas ready: {PizzasAmount}");
     }
@@ -88,6 +70,11 @@ public class Oven : MonoBehaviour, IHasACost, IHasStaticList
     {
         ovens.Remove(this);
     }
+    public void RemovePizzas(int i)
+    {
+        if (PizzasAmount > 0 && PizzasAmount >= i)
+            PizzasAmount -= i;
+    }
     public void AddPizzas(int amount)
     {
         if (amount > 0)
@@ -95,54 +82,119 @@ public class Oven : MonoBehaviour, IHasACost, IHasStaticList
             PizzasAmount += amount;
         }
     }
-    public void TriggerInput(Collider other)
+    public static void BuyOven()
     {
-        if (other.GetComponent<GoblinTransporter>() != null)
+        if (Pizzeria.Instance.Money >= OvenCost)
         {
-            if (other.GetComponent<GoblinTransporter>().ovenToHandle == this)
+            Pizzeria.Instance.DeductMoney(OvenCost);
+            Instantiate(Pizzeria.Instance.OvenPrefab);
+            ovens[ovens.Count - 1].transform.position = new Vector3(25 + 7 * (ovens.Count - 1), 0, 12);
+        }
+    }
+    public void ResetTriggers()
+    {
+        ovenInput = GetComponentInChildren<OvenInput>();
+        ovenInput.SetOven(this);
+        ovenOutput = GetComponentInChildren<OvenOutput>();
+        ovenOutput.SetOven(this);
+    }
+    public void ResetOven()
+    {
+        ResetTriggers();
+        OvenGoblinManager.ResetLists();
+    }
+    public static int SumOfReadyPizzas()
+    {
+        int sum = 0;
+        foreach (Oven o in ovens)
+        {
+            sum += o.PizzasAmount;
+        }
+        return sum;
+    }
+    public static List<Oven> OvensThatNeedIngredients()
+    {
+        List<Oven> temp = new List<Oven>();
+        foreach (Oven o in ovens)
+        {
+            if (o.OvenIngredientsManager.NeedIngredients())
             {
-                //goblinTransportersWithIngredients.Remove(other.GetComponent<GoblinTransporter>());
-                RemoveIncomingGoblinWithIngredientsFromList(other.GetComponent<GoblinTransporter>());
-                other.GetComponent<GoblinTransporter>().GoblinInventory.PassIngredients().TransferAllTo(Ingredients);
+                temp.Add(o);
             }
         }
-        UpdateDisplay();
+        return temp;
     }
-    public void TriggerOutput(Collider other)
+    public static List<Oven> OvensWithPizzaReady()
     {
-        if (other.GetComponent<GoblinTransporter>() != null)
+        List<Oven> temp = new List<Oven>();
+        foreach (Oven o in ovens)
         {
-            if (other.GetComponent<GoblinTransporter>().TargetOvenOutput != null)
+            if (o.OvenIngredientsManager.HasPizzaToPickUp())
             {
-                if (other.GetComponent<GoblinTransporter>().TargetOvenOutput == ovenOutput.transform)
+                temp.Add(o);
+            }
+        }
+        return temp;
+    }
+
+}
+
+public class OvenGoblinManager
+{
+    Oven ownerOven;
+    public List<GoblinTransporter> GoblinTransportersWithIngredients { get; private set; } = new List<GoblinTransporter>();
+    public int AmountOfGoblinHelpers => ((int)ownerOven.Upgrades.Level / 2) + 1;
+    public List<GoblinTransporter> GoblinForPizza { get; private set; } = new List<GoblinTransporter>();
+
+    public OvenGoblinManager(Oven ownerOven)
+    {
+        this.ownerOven = ownerOven;
+    }
+
+    public void UpdateLogic()
+    {
+        if (GoblinTransportersWithIngredients.Count >= AmountOfGoblinHelpers)
+        {
+            if (GoblinTransportersWithIngredients.Any(g => g.ovenToHandle != ownerOven))
+            {
+                Debug.Log("NotRemovingCorrectly, adding too much to list");
+                List<GoblinTransporter> toRemove = new List<GoblinTransporter>();
+                foreach (GoblinTransporter t in GoblinTransportersWithIngredients)
                 {
-                    int i = Math.Min(other.GetComponent<GoblinTransporter>().GoblinInventory.HowMuchFreeSpace(), PizzasAmount);
-                    other.GetComponent<GoblinTransporter>().GoblinInventory.PickUpPizzaUpToFullInv(PizzasAmount);
-                    PizzasAmount -= i;
-                    HUDScript.Instance.UpdatePizzasToSell();
-                    GoblinForPizza.Remove(other.GetComponent<GoblinTransporter>());
+                    if (t.ovenToHandle != ownerOven)
+                    {
+                        toRemove.Add(t);
+                    }
+                }
+                foreach (GoblinTransporter t in toRemove)
+                {
+                    GoblinTransportersWithIngredients.Remove(t);
+                    t.State.Reset();
                 }
             }
         }
-        UpdateDisplay();
-    }
-    public void UpdateDisplay()
-    {
-        OvenDisplayT.text = $"Ingredients: {Ingredients.DoughAmount}, {Ingredients.SauceAmount}, {Ingredients.ToppingsAmount}\n" +
-            $"Oven: {OvenONOFF()}\n" +
-            $"Pizzas ready: {PizzasAmount}\n" +
-            $"Lv. {Upgrades.Level}  XP: {Upgrades.Exp}/{Upgrades.LevelThreshold()}";
-    }
-    string OvenONOFF()
-    {
-        if (Baking.IsBaking)
-            return "ON";
-        else
-            return "OFF";
+        if (GoblinTransportersWithIngredients.Any(g => g.ovenToHandle != ownerOven))
+        {
+            Debug.Log("NotRemovingCorrectly");
+            List<GoblinTransporter> toRemove = new List<GoblinTransporter>();
+            foreach (GoblinTransporter t in GoblinTransportersWithIngredients)
+            {
+                if (t.ovenToHandle != ownerOven)
+                {
+                    toRemove.Add(t);
+                }
+            }
+            foreach (GoblinTransporter t in toRemove)
+            {
+                GoblinTransportersWithIngredients.Remove(t);
+                t.State.Reset();
+            }
+
+        }
+
     }
     public void SetIncomingGoblinWithIngredients(GoblinTransporter GoblinTransporter)
     {
-        //GoblinWithIngredients = GoblinTransporter;
         GoblinTransportersWithIngredients.Add(GoblinTransporter);
     }
     public void RemoveIncomingGoblinWithIngredientsFromList(GoblinTransporter goblinTransporter)
@@ -151,18 +203,33 @@ public class Oven : MonoBehaviour, IHasACost, IHasStaticList
         {
             GoblinTransportersWithIngredients.Remove(goblinTransporter);
         }
-        goblinTransporter.RemoveOvenToHandle(this);
+        goblinTransporter.RemoveOvenToHandle(ownerOven);
     }
     public void AddIncomingGoblinForPizza(GoblinTransporter goblinTransporter)
     {
         GoblinForPizza.Add(goblinTransporter);
+    }
+
+    public void ResetLists()
+    {
+        GoblinForPizza.Clear();
+        GoblinTransportersWithIngredients.Clear();
+    }
+}
+
+public class OvenIngredientsManager
+{
+    Oven ownerOven;
+    public OvenIngredientsManager(Oven ownerOven)
+    {
+        this.ownerOven = ownerOven;
     }
     /// <summary>
     /// returns true if no goblin is coming and need at least one ingredients and shelf has this ingredients
     /// </summary>
     public bool NeedIngredients()
     {
-        if (GoblinTransportersWithIngredients.Count >= AmountOfGoblinHelpers)
+        if (ownerOven.OvenGoblinManager.GoblinTransportersWithIngredients.Count >= ownerOven.OvenGoblinManager.AmountOfGoblinHelpers)
             return false;
         if (Pizzeria.Instance.Ingredients.DoughAmount > 0 && NeedDough(0))
             return true;
@@ -174,7 +241,7 @@ public class Oven : MonoBehaviour, IHasACost, IHasStaticList
     }
     public bool NeedIngredients(GoblinTransporter goblinToCheck)
     {
-        if (!GoblinTransportersWithIngredients.Contains(goblinToCheck))
+        if (!ownerOven.OvenGoblinManager.GoblinTransportersWithIngredients.Contains(goblinToCheck))
             return false;
         if (Pizzeria.Instance.Ingredients.DoughAmount > 0 && NeedDough(0))
             return true;
@@ -195,88 +262,86 @@ public class Oven : MonoBehaviour, IHasACost, IHasStaticList
         return false;
 
     }
-    public static List<Oven> OvensThatNeedIngredients()
-    {
-        List<Oven> temp = new List<Oven>();
-        foreach (Oven o in ovens)
-        {
-            if (o.NeedIngredients())
-            {
-                temp.Add(o);
-            }
-        }
-        return temp;
-    }
     public bool HasPizzaToPickUp()
     {
 
-        if (PizzasAmount > 0)
-            if (PizzasAmount > GoblinForPizza.Sum(g => g.GoblinInventory.HowMuchFreeSpace()))
+        if (ownerOven.PizzasAmount > 0)
+            if (ownerOven.PizzasAmount > ownerOven.OvenGoblinManager.GoblinForPizza.Sum(g => g.GoblinInventory.HowMuchFreeSpace()))
                 return true;
         return false;
-    }
-    public static List<Oven> OvensWithPizzaReady()
-    {
-        List<Oven> temp = new List<Oven>();
-        foreach (Oven o in ovens)
-        {
-            if (o.HasPizzaToPickUp())
-            {
-                temp.Add(o);
-            }
-        }
-        return temp;
-    }
-    public static int SumOfReadyPizzas()
-    {
-        int sum = 0;
-        foreach (Oven o in ovens)
-        {
-            sum += o.PizzasAmount;
-        }
-        return sum;
     }
     /// <summary>
     /// if with this amount of Dough oven will have enough for full batch
     /// </summary>
     public bool NeedDough(int incomingDough)
     {
-        return Ingredients.DoughAmount + incomingDough + GoblinTransportersWithIngredients.Sum(g => g.GoblinInventory.DoughAmount) < Baking.BakeAmount;
+        return ownerOven.Ingredients.DoughAmount + incomingDough + ownerOven.OvenGoblinManager.GoblinTransportersWithIngredients.Sum(g => g.GoblinInventory.DoughAmount) < ownerOven.Baking.BakeAmount;
     }
     /// <summary>
     /// if with this amount of Sauce oven will have enough for full batch
     /// </summary>
     public bool NeedSauce(int incomingSauce)
     {
-        return Ingredients.SauceAmount + incomingSauce + GoblinTransportersWithIngredients.Sum(g => g.GoblinInventory.SauceAmount) < Baking.BakeAmount;
+        return ownerOven.Ingredients.SauceAmount + incomingSauce + ownerOven.OvenGoblinManager.GoblinTransportersWithIngredients.Sum(g => g.GoblinInventory.SauceAmount) < ownerOven.Baking.BakeAmount;
     }
     /// <summary>
     /// if with this amount of Toppings oven will have enough for full batch
     /// </summary>
     public bool NeedToppings(int incomingToppings)
     {
-        return Ingredients.ToppingsAmount + incomingToppings + GoblinTransportersWithIngredients.Sum(g => g.GoblinInventory.ToppingsAmount) < Baking.BakeAmount;
+        return ownerOven.Ingredients.ToppingsAmount + incomingToppings + ownerOven.OvenGoblinManager.GoblinTransportersWithIngredients.Sum(g => g.GoblinInventory.ToppingsAmount) < ownerOven.Baking.BakeAmount;
     }
-    public static void BuyOven()
+
+}
+
+public class OvenVisuals
+{
+    Oven ownerOven;
+
+    GameObject ovenVisMatOff;
+    GameObject ovenVisMatOn;
+    TextMeshProUGUI OvenDisplayT;
+    GameObject UpgradeTrigger;
+
+    public void UpdateVis()
     {
-        if (Pizzeria.Instance.Money >= OvenCost)
-        {
-            Pizzeria.Instance.DeductMoney(OvenCost);
-            Instantiate(Pizzeria.Instance.OvenPrefab);
-            ovens[ovens.Count - 1].transform.position = new Vector3(25 + 7 * (ovens.Count - 1), 0, 12);
-        }
+        ovenVisMatOff.SetActive(!ownerOven.Baking.IsBaking);
+        ovenVisMatOn.SetActive(ownerOven.Baking.IsBaking);
+        UpgradeTrigger.SetActive(ownerOven.Upgrades.Upgrades.Count < ownerOven.Upgrades.Level - 1);
+
     }
-    public void ResetTriggers()
+
+    public OvenVisuals(Oven ownerOven)
     {
-        ovenInput = GetComponentInChildren<OvenInput>();
-        ovenInput.SetOven(this);
-        ovenOutput = GetComponentInChildren<OvenOutput>();
-        ovenOutput.SetOven(this);
+        this.ownerOven = ownerOven;
     }
-    public void Reset()
+    public void UpdateDisplay()
     {
-        ResetTriggers();
-        GoblinForPizza.Clear();
-        GoblinTransportersWithIngredients.Clear();
+        OvenDisplayT.text = $"Ingredients: {ownerOven.Ingredients.DoughAmount}, {ownerOven.Ingredients.SauceAmount}, {ownerOven.Ingredients.ToppingsAmount}\n" +
+            $"Oven: {OvenONOFF()}\n" +
+            $"Pizzas ready: {ownerOven.PizzasAmount}\n" +
+            $"Lv. {ownerOven.Upgrades.Level}  XP: {ownerOven.Upgrades.Exp}/{ownerOven.Upgrades.LevelThreshold()}";
+    }
+    string OvenONOFF()
+    {
+        if (ownerOven.Baking.IsBaking)
+            return "ON";
+        else
+            return "OFF";
+    }
+
+
+    public void SetMatOFF(GameObject obj)
+    {
+        ovenVisMatOff = obj;
+    }
+    public void SetMatON(GameObject obj) { ovenVisMatOn = obj; }
+    public void SetDisplayT(TextMeshProUGUI txt)
+    {
+        OvenDisplayT = txt;
+    }
+    public void SetUpgradeTrigger(GameObject obj)
+    {
+        UpgradeTrigger = obj;
     }
 }

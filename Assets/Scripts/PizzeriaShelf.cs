@@ -17,17 +17,17 @@ public class PizzeriaShelf : MonoBehaviour
         if (goblin.ovenToHandle == null)
         {
             goblin.State.Reset();
-            if (Oven.ovens.Any(o => o.GoblinTransportersWithIngredients.Contains(goblin)))
+            if (Oven.ovens.Any(o => o.OvenGoblinManager.GoblinTransportersWithIngredients.Contains(goblin)))
                 foreach (var o in Oven.ovens)
                 {
-                    if (o.GoblinTransportersWithIngredients.Contains(goblin))
+                    if (o.OvenGoblinManager.GoblinTransportersWithIngredients.Contains(goblin))
                     {
-                        o.GoblinTransportersWithIngredients.Remove(goblin);
+                        o.OvenGoblinManager.GoblinTransportersWithIngredients.Remove(goblin);
                     }
                 }
             return;
         }
-        if (goblin.ovenToHandle.GoblinTransportersWithIngredients.Contains(goblin))
+        if (goblin.ovenToHandle.OvenGoblinManager.GoblinTransportersWithIngredients.Contains(goblin))
         {
             goblin.GoblinInventory.ManageTransferFromShelfToGoblinInventory();
             if (goblin.State is not DeliverToOven)
