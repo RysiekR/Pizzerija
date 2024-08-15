@@ -113,15 +113,15 @@ public class TabMenu : MonoBehaviour
 
         //SellPizzaB = MainMenuFirst.transform.Find("SellPizzaB").GetComponent<Button>();
         //SellPizzaB.onClick.AddListener(Pizzeria.Instance.SellPizzaButton);
-        BuyDeliveryGoblinsB = MainMenuFirst.transform.Find("BuyDeliveryGoblinB").GetComponent<Button>();
-        BuyDeliveryGoblinsB.onClick.AddListener(Distribution.Instance.BuyDeliveryGoblin);
+        //BuyDeliveryGoblinsB = MainMenuFirst.transform.Find("BuyDeliveryGoblinB").GetComponent<Button>();
+        //BuyDeliveryGoblinsB.onClick.AddListener(Distribution.Instance.BuyDeliveryGoblin);
         BuyOvenB = MainMenuFirst.transform.Find("BuyOvenB").GetComponent<Button>();
         BuyOvenB.onClick.AddListener(Oven.BuyOven);
         BuyOvenB.onClick.AddListener(UpdateCost);
-        BuyGoblinB = MainMenuFirst.transform.Find("BuyGoblinB").GetComponent<Button>();
+/*        BuyGoblinB = MainMenuFirst.transform.Find("BuyGoblinB").GetComponent<Button>();
         BuyGoblinB.onClick.AddListener(GoblinTransporter.BuyGoblinTransporter);
         BuyGoblinB.onClick.AddListener(UpdateCost);
-
+*/
         BuyGoblinT = MainMenuFirst.transform.Find("BuyGoblinT").GetComponent<TextMeshProUGUI>();
         BuyOvenT = MainMenuFirst.transform.Find("BuyOvenT").GetComponent<TextMeshProUGUI>();
 
@@ -137,7 +137,7 @@ public class TabMenu : MonoBehaviour
         RefreshMoneyText();
         RefreshPizzaText();
         RefreshIngridients();
-        BuyDeliveryGoblinsB.gameObject.SetActive(Pizzeria.Instance.PizzaPrice > 6);
+        //BuyDeliveryGoblinsB.gameObject.SetActive(Pizzeria.Instance.PizzaPrice > 6);
         AutoDeliveries();
         UpdateCost();
     }

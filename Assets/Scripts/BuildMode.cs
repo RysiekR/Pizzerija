@@ -49,7 +49,7 @@ public class BuildMode : MonoBehaviour
         {
             //logic what to do when in build mode, rotate, move, or initiate some methods
             //egzample: GetComponent<Oven>().OnBuild()
-            Vector3 spawnPosition = transform.position + transform.forward * 5;
+            Vector3 spawnPosition = transform.position + transform.forward * 20;
             Quaternion spawnRotation = transform.rotation;
             previewCube.transform.position = spawnPosition;
             previewCube.transform.rotation = spawnRotation;

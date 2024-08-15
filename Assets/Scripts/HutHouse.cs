@@ -1,9 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using TMPro;
-using Unity.AI.Navigation;
 using UnityEngine;
-using UnityEngine.AI;
 using UnityEngine.UI;
 
 public class HutHouse : MonoBehaviour, IHasACost, IHasStaticList
@@ -47,6 +45,7 @@ public class HutHouse : MonoBehaviour, IHasACost, IHasStaticList
         Vis2.SetActive(false);
         RestingSpot();
         NavMeshRebuilder.Instance.ResetNavMeshSurface();
+        transform.Find("Trigger").gameObject.SetActive(true);
     }
     private void Start()
     {
@@ -77,10 +76,14 @@ public class HutHouse : MonoBehaviour, IHasACost, IHasStaticList
         {
             if (Pizzeria.Instance.Money >= GoblinTransporter.GoblinCost)
             {
-                GoblinTransporter.BuyGoblinTransporter();
-                GoblinTransporter goblinTransporter = GoblinTransporter.Goblins[^1];
-                HutMembers.Add(goblinTransporter);
-                goblinTransporter.RestingSpot = Inside;
+                if (Pizzeria.Instance.Money >= GoblinTransporter.GoblinCost)
+                {
+                    Pizzeria.Instance.DeductMoney(GoblinTransporter.GoblinCost);
+                    GameObject goblin = Instantiate(Pizzeria.Instance.GoblinTransporterPrefab, Inside);
+                    GoblinTransporter goblinTransporter = goblin.GetComponent<GoblinTransporter>();
+                    HutMembers.Add(goblinTransporter);
+                    goblinTransporter.RestingSpot = Inside;
+                }
             }
         }
         UpdateAllHutsButtons();

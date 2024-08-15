@@ -81,6 +81,7 @@ public class OvenUpgrades
         {
             Exp -= LevelThreshold();
             Level++;
+            oven.OvenVisuals.UpgradeBuildingVisual();
         }
     }
     public int UpgradesToAdd()
@@ -133,7 +134,10 @@ public class OvenUpgrades
             {
                 GenerateUpgradeToChooseList();
                 BuyUpgrade(chosenUpgrade);
-                HideUpgradeHUD();
+                if (UpgradesToAdd() > 0)
+                    ShowUpgradeHUD();
+                else
+                    HideUpgradeHUD();
             }
         }
     }

@@ -30,6 +30,10 @@ public class DeliverySystem : MonoBehaviour
         ShopingCart = new ShopingCart();
         CalculateLazyBuyPrice();
     }
+    private void Start()
+    {
+        AutomaticSendOfTrucks();
+    }
     private void Update()
     {
         ETACounddown();

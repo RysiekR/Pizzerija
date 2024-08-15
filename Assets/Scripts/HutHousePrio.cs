@@ -5,7 +5,7 @@ using UnityEngine.UI;
 public class HutHousePrio : MonoBehaviour
 {
     private HutHouse ThisHutHouse;
-    private Canvas PrioC;
+    public Canvas PrioC;
 
     Button Index0Up;
     Button Index0Down;
@@ -55,6 +55,7 @@ public class HutHousePrio : MonoBehaviour
         NewestB.onClick.AddListener(() => { ThisHutHouse.ChangeOvenPrio(2); RefreshOvenPrioText(); });
 
         RefreshOvenPrioText();
+        PrioC.gameObject.SetActive(false);
     }
     private void OnTriggerEnter(Collider other)
     {

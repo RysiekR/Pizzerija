@@ -1,5 +1,4 @@
 using System;
-using System.Collections;
 using UnityEngine;
 
 public class DayCycle : MonoBehaviour
@@ -42,6 +41,8 @@ public class DayCycle : MonoBehaviour
             DayTime = 0f;
             NextDay();
             NavMeshRebuilder.Instance.ResetNavMeshSurface();
+            Market.Instance.CreateOrders();
+            TownsDisplay.Instance.UpdateTownsDisplay();
         }
     }
 

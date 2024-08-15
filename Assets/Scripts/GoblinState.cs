@@ -333,6 +333,7 @@ public class WalkToDropOffPizzaState : GoblinState
     }
     public override void ExecuteBehaviour()
     {
-        Goblin.NavMeshAgentGoblin.SetDestination(Distribution.Instance.DistributionInputSpot.position);
+        //Goblin.NavMeshAgentGoblin.SetDestination(Distribution.Instance.DistributionInputSpot.position);
+        Goblin.NavMeshAgentGoblin.SetDestination(Market.Instance.MarketInputSpot.position);
     }
 }

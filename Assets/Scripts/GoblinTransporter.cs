@@ -1,7 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Xml.Schema;
 using TMPro;
 using UnityEngine;
 using UnityEngine.AI;
@@ -10,8 +9,9 @@ public class GoblinTransporter : MonoBehaviour
 {
     public static List<GoblinTransporter> Goblins { get; private set; } = new List<GoblinTransporter>();
     public static int GoblinCost => Goblins.Count * 10;
-    
+
     public GoblinInventory GoblinInventory;
+    private Canvas InfoDisplayC;
     private TextMeshProUGUI MaxCarryT;
     public Animator Animator;
     public NavMeshAgent NavMeshAgentGoblin;
@@ -40,6 +40,7 @@ public class GoblinTransporter : MonoBehaviour
     private void Start()
     {
         MaxCarryT = transform.Find("Canvas").Find("MaxCarryT").GetComponent<TextMeshProUGUI>();
+        InfoDisplayC = transform.Find("Canvas").GetComponent<Canvas>();
         NavMeshAgentGoblin = GetComponent<NavMeshAgent>();
         UpdateCarryCap();
         RestingSpot = RestingSpotTrigger.RestingSpot;
@@ -50,6 +51,11 @@ public class GoblinTransporter : MonoBehaviour
     {
         StateExecution();
         CheckIfNotCarrying();
+        CanvasLookAt();
+    }
+    private void CanvasLookAt()
+    {
+        InfoDisplayC.transform.LookAt(InfoDisplayC.transform.position + Camera.main.transform.rotation * Vector3.forward, Camera.main.transform.rotation * Vector3.up);
     }
     public void UpdateCarryCap()
     {
@@ -88,7 +94,7 @@ public class GoblinTransporter : MonoBehaviour
     }
     public void RemoveOvenToHandle(Oven oven)
     {
-        if (oven != ovenToHandle && oven !=null)
+        if (oven != ovenToHandle && oven != null)
             Debug.Log("GOBLINTRANSPORTER romoving wrong oven");
         else
         {
@@ -126,11 +132,6 @@ public class GoblinTransporter : MonoBehaviour
     }
     public static void BuyGoblinTransporter()
     {
-        if (Pizzeria.Instance.Money >= GoblinCost)
-        {
-            Pizzeria.Instance.DeductMoney(GoblinCost);
-            Instantiate(Pizzeria.Instance.GoblinTransporterPrefab);
-        }
     }
 }
 

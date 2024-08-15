@@ -32,4 +32,5 @@ public class DistributionInput : MonoBehaviour
             Distribution.Instance.ReceivePizzas(other.GetComponent<GoblinTransporter>().GoblinInventory.PassPizzas());
         }
     }
+
 }

@@ -367,11 +367,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 92f8dfedfedd10043a60cc669d39d0e7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  RestingSpot: {fileID: 0}
-  IngredientsVisual: {fileID: 3229747503234515610}
-  PizzaBox: {fileID: 4064659366609921988}
   Animator: {fileID: 443611017869222077}
   NavMeshAgentGoblin: {fileID: 0}
+  IngredientsVisual: {fileID: 3229747503234515610}
+  PizzaBox: {fileID: 4064659366609921988}
+  RestingSpot: {fileID: 0}
   TargetOvenInput: {fileID: 0}
   TargetOvenOutput: {fileID: 0}
   ovenToHandle: {fileID: 0}
@@ -590,6 +590,7 @@ GameObject:
   - component: {fileID: 4957675418547218505}
   - component: {fileID: 1200610512496344026}
   - component: {fileID: 5444259868834774937}
+  - component: {fileID: 7298690677705061911}
   m_Layer: 0
   m_Name: Canvas
   m_TagString: Untagged
@@ -604,7 +605,7 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8573985628990630151}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 0.01, y: 0.01, z: 0.01}
   m_ConstrainProportionsScale: 1
@@ -680,6 +681,24 @@ MonoBehaviour:
   m_BlockingMask:
     serializedVersion: 2
     m_Bits: 4294967295
+--- !u!1183024399 &7298690677705061911
+LookAtConstraint:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8573985628990630151}
+  m_Enabled: 0
+  serializedVersion: 2
+  m_Weight: 1
+  m_RotationAtRest: {x: 0, y: 0, z: 0}
+  m_RotationOffset: {x: 0, y: 0, z: 0}
+  m_Roll: 0
+  m_WorldUpObject: {fileID: 0}
+  m_UseUpObject: 0
+  m_Active: 1
+  m_IsLocked: 0
+  m_Sources: []
 --- !u!1001 &1538258608779279307
 PrefabInstance:
   m_ObjectHideFlags: 0

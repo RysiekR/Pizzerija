@@ -6,7 +6,7 @@ using UnityEngine;
 public class Distribution : MonoBehaviour
 {
     public static Distribution Instance;
-    public Transform DistributionInputSpot;
+    public Transform DistributionInputSpot { get; set; }
     public int PizzaAmmount { get; private set; } = 0;
     public List<DeliveryGoblin> DeliveryGoblins { get; private set; } = new List<DeliveryGoblin>();
 
@@ -76,7 +76,7 @@ public class Distribution : MonoBehaviour
     {
         if (Pizzeria.Instance.PizzaPrice > 6)
         {
-            DeliveryGoblin deliveryBoy = new DeliveryGoblin("Debug name",1,5,10);
+            DeliveryGoblin deliveryBoy = new DeliveryGoblin("Debug name", 1, 5, 10);
             if (Pizzeria.Instance.CanPayWithMoney(deliveryBoy.PayPerDay))
             {
                 Instance.DeliveryGoblins.Add(deliveryBoy);
@@ -84,6 +84,7 @@ public class Distribution : MonoBehaviour
             }
         }
     }
+
 
     public string RestingTimes()
     {
@@ -102,4 +103,5 @@ public class Distribution : MonoBehaviour
 
         return sb.ToString();
     }
+
 }

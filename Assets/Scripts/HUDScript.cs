@@ -89,7 +89,7 @@ public class HUDScript : MonoBehaviour
     }
     void UpdateGoblinsWaiting()
     {
-        if (Distribution.Instance.DeliveryGoblins.Count <= 0)
+        /*if (Distribution.Instance.DeliveryGoblins.Count <= 0)
         {
             goblinsWaiting.transform.gameObject.SetActive(false);
             return;
@@ -99,7 +99,7 @@ public class HUDScript : MonoBehaviour
             goblinsWaiting.transform.gameObject.SetActive(false);
             return;
         }
-        goblinsWaiting.transform.gameObject.SetActive(true);
+        goblinsWaiting.transform.gameObject.SetActive(true);*/
     }
 
     void UpdateNoIngredients()

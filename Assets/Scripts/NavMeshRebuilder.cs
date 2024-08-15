@@ -38,12 +38,12 @@ public class NavMeshRebuilder : MonoBehaviour
         {
             // You can check progress here if needed
             float progress = asyncOp.progress;
-            Debug.Log($"NavMesh update progress: {progress * 100}%");
+            //Debug.Log($"NavMesh update progress: {progress * 100}%");
 
             yield return null;
         }
 
-        Debug.Log("NavMesh update completed");
+        //Debug.Log("NavMesh update completed");
     }
 
     private void ResetAll()

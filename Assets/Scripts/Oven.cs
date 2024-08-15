@@ -23,6 +23,7 @@ public class Oven : MonoBehaviour, IHasACost, IHasStaticList
 
     public OvenVisuals OvenVisuals;
 
+
     private void Awake()
     {
         OvenVisuals = new(this);
@@ -40,6 +41,9 @@ public class Oven : MonoBehaviour, IHasACost, IHasStaticList
         OvenVisuals.SetMatON(transform.Find("OvenVisualOn").GameObject());
         OvenVisuals.SetDisplayT(transform.Find("Canvas").Find("OvenDisplayT").GetComponent<TextMeshProUGUI>());
         OvenVisuals.SetUpgradeTrigger(transform.Find("UpgradeTrigger").GameObject());
+        OvenVisuals.SetHuts(transform.Find("Houses_FirstAge_2_Level1").GameObject(),
+            transform.Find("Houses_FirstAge_2_Level2").GameObject(),
+            transform.Find("workhut3").GameObject());
     }
     void IHasStaticList.Initiate()
     {
@@ -48,6 +52,8 @@ public class Oven : MonoBehaviour, IHasACost, IHasStaticList
             ovens.Add(this);
         }
         ResetTriggers();
+        OvenVisuals.UpgradeBuildingVisual();
+
     }
     private void Start()
     {
@@ -303,12 +309,34 @@ public class OvenVisuals
     TextMeshProUGUI OvenDisplayT;
     GameObject UpgradeTrigger;
 
+    GameObject Hut1;
+    GameObject Hut2;
+    GameObject Hut3;
+
     public void UpdateVis()
     {
         ovenVisMatOff.SetActive(!ownerOven.Baking.IsBaking);
         ovenVisMatOn.SetActive(ownerOven.Baking.IsBaking);
         UpgradeTrigger.SetActive(ownerOven.Upgrades.Upgrades.Count < ownerOven.Upgrades.Level - 1);
+    }
 
+    public void UpgradeBuildingVisual()
+    {
+        Hut1.SetActive(false);
+        Hut2.SetActive(false);
+        Hut3.SetActive(false);
+        switch (ownerOven.Upgrades.Level)
+        {
+            case 0: 
+            case 1: break;
+            case 2:
+            case 3: 
+            case 4: Hut1.SetActive(true); break;
+            case 5:
+            case 6:
+            case 7: Hut2.SetActive(true); break;
+            default: Hut3.SetActive(true); break;
+        }
     }
 
     public OvenVisuals(Oven ownerOven)
@@ -343,5 +371,12 @@ public class OvenVisuals
     public void SetUpgradeTrigger(GameObject obj)
     {
         UpgradeTrigger = obj;
+    }
+
+    public void SetHuts(GameObject obj1, GameObject obj2, GameObject obj3)
+    {
+        Hut1 = obj1;
+        Hut2 = obj2;
+        Hut3 = obj3;
     }
 }
